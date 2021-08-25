@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
-
-import 'quizbrain.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'QuizBrain.dart';
 import 'results.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+  Home({Key key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -14,85 +13,130 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int i = 1;
-  bool canceltimer = false;
+  bool cancelTimer = false;
   int marks = 0;
-
+  int timer = 30;
+  String showTimer = '30';
   CountDownController _controller = CountDownController();
+
+  @override
+  void initState() {
+    startTimer();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Stack(
-          children: [
-            Background(),
-            page(),
-          ],
-        ));
-  }
-
-  //to decide what the color of the button
-  var btncolor = {
-    'a': Color.fromRGBO(159, 88, 216, 1),
-    'b': Color.fromRGBO(159, 88, 216, 1),
-    'c': Color.fromRGBO(159, 88, 216, 1),
-    'd': Color.fromRGBO(159, 88, 216, 1)
-  };
-// button creater
-//TODO  تعديل هدول الزرين ليصيرو متل يلي ب الصورة يلي شفناها
-  MaterialButton choicebutton(String k) {
-    return MaterialButton(
-      minWidth: MediaQuery.maybeOf(context)!.textScaleFactor,
-      height: 50,
-      onPressed: () {
-        checkanswer(k);
-        setState(() {});
-      },
-      child: Text(Quizbrain.omar[i.toString()]![k].toString()),
-      color: btncolor[k],
-      highlightColor: Color.fromRGBO(159, 88, 216, 1),
-      splashColor: Color.fromRGBO(159, 88, 216, 1),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Stack(
+        alignment: Alignment(-0.1, -0.5),
+        children: [
+          background(),
+          page(),
+        ],
+      ),
     );
   }
 
-// functions
-// to check if the answer is right or wrong
-  void checkanswer(String k) {
+  //to decide what the color of the button
+  var btnColor = {
+    'a': Colors.black45,
+    'b': Colors.black45,
+    'c': Colors.black45,
+    'd': Colors.black45,
+  };
+
+  // button creator
+  MaterialButton choiceButton(String k) {
+    return MaterialButton(
+      minWidth: 225,
+      height: 40,
+      color: Color.fromRGBO(255, 253, 255, 99),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: BorderSide(
+          color: btnColor[k],
+          width: 2,
+        ),
+      ),
+      onPressed: () {
+        checkAnswer(k);
+        setState(() {});
+      },
+      child: Text(
+        QuizBrain.omar[i.toString()][k].toString(),
+        textDirection: TextDirection.rtl,
+      ),
+      highlightColor: Colors.indigoAccent,
+      splashColor: Colors.indigo[800],
+    );
+  }
+
+  // functions
+  // to check if the answer is right or wrong
+  void checkAnswer(String k) {
     setState(() {
-      if (k == Quizbrain.ans[i - 1]) {
+      if (k == QuizBrain.ans[i - 1]) {
         marks++;
-        btncolor[k] = Colors.green;
+        btnColor[k] = Colors.green;
       } else {
-        btncolor[k] = Colors.red;
+        btnColor[k] = Colors.red;
       }
-      canceltimer = true;
+      cancelTimer = true;
+    });
+    Timer(Duration(seconds: 1), nextQuiz);
+  }
+
+  // to start the timer
+  void startTimer() async {
+    const oneSec = Duration(seconds: 1);
+    Timer.periodic(oneSec, (Timer t) {
+      setState(() {
+        if (timer <= 1) {
+          t.cancel();
+          nextQuiz();
+          startTimer();
+        } else if (cancelTimer == true) {
+        } else {
+          timer--;
+        }
+        showTimer = timer.toString();
+      });
     });
   }
 
-// play sounds
+  // play sounds
 
-// to move between quizzes
-  void nextquiz() {
-    canceltimer = false;
-
+  // to move between quizzes
+  void nextQuiz() {
+    cancelTimer = false;
+    timer = 30;
     setState(() {
       if (i < 100) {
         i++;
       } else {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => results(marks: marks)));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => results(marks: marks),
+          ),
+        );
       }
-      btncolor['a'] = Color.fromRGBO(159, 88, 216, 1);
-      btncolor['b'] = Color.fromRGBO(159, 88, 216, 1);
-      btncolor['c'] = Color.fromRGBO(159, 88, 216, 1);
-      btncolor['d'] = Color.fromRGBO(159, 88, 216, 1);
+      btnColor['a'] = Colors.black45;
+      btnColor['b'] = Colors.black45;
+      btnColor['c'] = Colors.black45;
+      btnColor['d'] = Colors.black45;
     });
   }
 
+
+  //UI
   Container page() {
     return Container(
       child: Column(
@@ -104,29 +148,12 @@ class _HomeState extends State<Home> {
             height: 150,
           ),
           Stack(
-            alignment: Alignment(0, -1.25),
+            alignment: Alignment.topCenter,
             children: [
-              quizbox(Quizbrain.qui[i - 1].quiz, Quizbrain.qui.length),
-              CircularCountDownTimer(
-                width: MediaQuery.of(context).size.width / 4,
-                backgroundColor: Colors.white,
-                textStyle: TextStyle(
-                    color: Color.fromRGBO(159, 88, 216, 1),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-                height: MediaQuery.of(context).size.height / 12,
-                duration: 30,
-                fillColor: Color.fromRGBO(159, 88, 216, 1),
-                isReverse: true,
-                isReverseAnimation: true,
-                strokeWidth: 3.5,
-                controller: _controller,
-                ringColor: Colors.white,
-                onComplete: () {
-                  nextquiz();
-                  _controller.restart();
-                },
-              )
+              quizBox(QuizBrain.qui[i - 1].quiz, QuizBrain.qui.length),
+              Container(
+                child: Text(showTimer),
+              ),
             ],
           ),
           SizedBox(
@@ -134,12 +161,12 @@ class _HomeState extends State<Home> {
           ),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                choicebutton('a'),
-                choicebutton('b'),
-                choicebutton('c'),
-                choicebutton('d')
+                choiceButton('a'),
+                choiceButton('b'),
+                choiceButton('c'),
+                choiceButton('d')
               ],
             ),
           ),
@@ -147,36 +174,68 @@ class _HomeState extends State<Home> {
             //TODO 1 بدنا نعدل هدول الزرين ل يصيرو next back
             children: [
               Expanded(
-                child: MaterialButton(
-                  color: Color.fromRGBO(159, 88, 216, 1),
+                child: TextButton(
                   onPressed: () {},
-                  child: Text('data'),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Color.fromRGBO(190, 90, 220, 50),
+                  ),
                 ),
-              ),
-              VerticalDivider(
-                width: 3,
               ),
               Expanded(
-                child: MaterialButton(
-                  color: Color.fromRGBO(159, 88, 216, 1),
+                child: TextButton(
                   onPressed: () {},
-                  child: Text('data'),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Color.fromRGBO(220, 175, 255, 80),
+                      ),
+                      elevation: MaterialStateProperty.all(3),
+                      side: MaterialStateProperty.all(
+                        BorderSide(
+                          color: Color.fromRGBO(190, 90, 220, 50),
+                          width: 1.5,
+                        ),
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      )),
+                  child: Text(
+                    'Check Answer',
+                    style: TextStyle(
+                      color: Color.fromRGBO(190, 90, 220, 50),
+                    ),
+                  ),
                 ),
-              )
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {},
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color.fromRGBO(190, 90, 220, 50),
+                  ),
+                ),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  Container quizbox(String a, int y) {
+  Container quizBox(String a, int y) {
+    Color c = Color.fromRGBO(255, 255, 255, 100);
     return Container(
-      height: MediaQuery.of(context).size.height / 3.4,
+      height: 240,
+      //color: Color.fromRGBO(255, 255, 255, 100),
       padding: EdgeInsets.all(25),
       margin: EdgeInsets.only(left: 25, right: 25, top: 15),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
         children: [
           Container(
@@ -184,17 +243,13 @@ class _HomeState extends State<Home> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(marks.toString(),
-                      style: TextStyle(color: Colors.green, fontSize: 20)),
+                  child: Text('right'),
                   flex: 3,
                 ),
-                Expanded(flex: 18, child: SizedBox()),
+                Expanded(flex: 14, child: SizedBox()),
                 Expanded(
                   flex: 3,
-                  child: Text(
-                    marks.toString(),
-                    style: TextStyle(fontSize: 20, color: Colors.red),
-                  ),
+                  child: Text('wrong'),
                 )
               ],
             ),
@@ -203,34 +258,38 @@ class _HomeState extends State<Home> {
             height: 25,
           ),
           Center(
-            child: Text(
-              'question $i / $y',
-              style: TextStyle(color: Color.fromARGB(255, 159, 88, 216)),
-            ),
-          ),
-          SizedBox(
-            height: 10,
+            child: Text('question $i / $y'),
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(a),
-          )
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              a,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Container Background() {
+  Container background() {
     return Container(
-      margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 1.5),
+      margin: EdgeInsets.only(bottom: 450),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
         image: DecorationImage(
-            image: AssetImage(
-              'images/image.jpg',
-            ),
-            fit: BoxFit.cover),
+          image: AssetImage(
+            'images/purple-background-1.0.png',
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

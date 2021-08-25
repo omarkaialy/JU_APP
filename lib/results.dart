@@ -4,7 +4,7 @@ import 'splash.dart';
 
 class results extends StatefulWidget {
   int marks;
-  results({Key? key, required this.marks}) : super(key: key);
+  results({Key key, this.marks}) : super(key: key);
 
   @override
   _resultsState createState() => _resultsState(marks);
@@ -51,13 +51,13 @@ class _resultsState extends State<results> {
               child: Material(
                 child: FlatButton(
                   onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => splash()));
+                    /*Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => Splash(),),);*/
                   },
                   child: Text('Continue'),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
