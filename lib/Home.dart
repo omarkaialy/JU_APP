@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 
 import 'quizbrain.dart';
@@ -16,14 +16,8 @@ class _HomeState extends State<Home> {
   int i = 1;
   bool canceltimer = false;
   int marks = 0;
-  int timer = 30;
-  String showtimer = '30';
 
-  @override
-  void initState() {
-    starttimer();
-    super.initState();
-  }
+  CountDownController _controller = CountDownController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +28,6 @@ class _HomeState extends State<Home> {
           elevation: 0,
         ),
         body: Stack(
-          alignment: Alignment(-0.1, -0.5),
           children: [
             Background(),
             page(),
@@ -44,16 +37,16 @@ class _HomeState extends State<Home> {
 
   //to decide what the color of the button
   var btncolor = {
-    'a': Colors.indigo,
-    'b': Colors.indigo,
-    'c': Colors.indigo,
-    'd': Colors.indigo
+    'a': Color.fromRGBO(159, 88, 216, 1),
+    'b': Color.fromRGBO(159, 88, 216, 1),
+    'c': Color.fromRGBO(159, 88, 216, 1),
+    'd': Color.fromRGBO(159, 88, 216, 1)
   };
 // button creater
 //TODO  تعديل هدول الزرين ليصيرو متل يلي ب الصورة يلي شفناها
   MaterialButton choicebutton(String k) {
     return MaterialButton(
-      minWidth: 200,
+      minWidth: MediaQuery.maybeOf(context)!.textScaleFactor,
       height: 50,
       onPressed: () {
         checkanswer(k);
@@ -61,8 +54,8 @@ class _HomeState extends State<Home> {
       },
       child: Text(Quizbrain.omar[i.toString()]![k].toString()),
       color: btncolor[k],
-      highlightColor: Colors.indigoAccent,
-      splashColor: Colors.indigo[800],
+      highlightColor: Color.fromRGBO(159, 88, 216, 1),
+      splashColor: Color.fromRGBO(159, 88, 216, 1),
     );
   }
 
@@ -78,25 +71,6 @@ class _HomeState extends State<Home> {
       }
       canceltimer = true;
     });
-    Timer(Duration(seconds: 1), nextquiz);
-  }
-
-// to start the timer
-  void starttimer() async {
-    const onesec = Duration(seconds: 1);
-    Timer.periodic(onesec, (Timer t) {
-      setState(() {
-        if (timer <= 1) {
-          t.cancel();
-          nextquiz();
-          starttimer();
-        } else if (canceltimer == true) {
-        } else {
-          timer--;
-        }
-        showtimer = timer.toString();
-      });
-    });
   }
 
 // play sounds
@@ -104,7 +78,7 @@ class _HomeState extends State<Home> {
 // to move between quizzes
   void nextquiz() {
     canceltimer = false;
-    timer = 30;
+
     setState(() {
       if (i < 100) {
         i++;
@@ -112,10 +86,10 @@ class _HomeState extends State<Home> {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => results(marks: marks)));
       }
-      btncolor['a'] = Colors.indigo;
-      btncolor['b'] = Colors.indigo;
-      btncolor['c'] = Colors.indigo;
-      btncolor['d'] = Colors.indigo;
+      btncolor['a'] = Color.fromRGBO(159, 88, 216, 1);
+      btncolor['b'] = Color.fromRGBO(159, 88, 216, 1);
+      btncolor['c'] = Color.fromRGBO(159, 88, 216, 1);
+      btncolor['d'] = Color.fromRGBO(159, 88, 216, 1);
     });
   }
 
@@ -130,11 +104,28 @@ class _HomeState extends State<Home> {
             height: 150,
           ),
           Stack(
-            alignment: Alignment.topCenter,
+            alignment: Alignment(0, -1.25),
             children: [
               quizbox(Quizbrain.qui[i - 1].quiz, Quizbrain.qui.length),
-              Container(
-                child: Text(showtimer),
+              CircularCountDownTimer(
+                width: MediaQuery.of(context).size.width / 4,
+                backgroundColor: Colors.white,
+                textStyle: TextStyle(
+                    color: Color.fromRGBO(159, 88, 216, 1),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+                height: MediaQuery.of(context).size.height / 12,
+                duration: 30,
+                fillColor: Color.fromRGBO(159, 88, 216, 1),
+                isReverse: true,
+                isReverseAnimation: true,
+                strokeWidth: 3.5,
+                controller: _controller,
+                ringColor: Colors.white,
+                onComplete: () {
+                  nextquiz();
+                  _controller.restart();
+                },
               )
             ],
           ),
@@ -157,7 +148,7 @@ class _HomeState extends State<Home> {
             children: [
               Expanded(
                 child: MaterialButton(
-                  color: Colors.indigo,
+                  color: Color.fromRGBO(159, 88, 216, 1),
                   onPressed: () {},
                   child: Text('data'),
                 ),
@@ -167,7 +158,7 @@ class _HomeState extends State<Home> {
               ),
               Expanded(
                 child: MaterialButton(
-                  color: Colors.indigo,
+                  color: Color.fromRGBO(159, 88, 216, 1),
                   onPressed: () {},
                   child: Text('data'),
                 ),
@@ -181,11 +172,11 @@ class _HomeState extends State<Home> {
 
   Container quizbox(String a, int y) {
     return Container(
-      height: 250,
+      height: MediaQuery.of(context).size.height / 3.4,
       padding: EdgeInsets.all(25),
       margin: EdgeInsets.only(left: 25, right: 25, top: 15),
       decoration: BoxDecoration(
-          color: Colors.grey[200], borderRadius: BorderRadius.circular(10)),
+          color: Colors.white, borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           Container(
@@ -193,13 +184,17 @@ class _HomeState extends State<Home> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text('right'),
+                  child: Text(marks.toString(),
+                      style: TextStyle(color: Colors.green, fontSize: 20)),
                   flex: 3,
                 ),
                 Expanded(flex: 18, child: SizedBox()),
                 Expanded(
                   flex: 3,
-                  child: Text('wrong'),
+                  child: Text(
+                    marks.toString(),
+                    style: TextStyle(fontSize: 20, color: Colors.red),
+                  ),
                 )
               ],
             ),
@@ -208,7 +203,10 @@ class _HomeState extends State<Home> {
             height: 25,
           ),
           Center(
-            child: Text('question $i / $y'),
+            child: Text(
+              'question $i / $y',
+              style: TextStyle(color: Color.fromARGB(255, 159, 88, 216)),
+            ),
           ),
           SizedBox(
             height: 10,
@@ -224,7 +222,7 @@ class _HomeState extends State<Home> {
 
   Container Background() {
     return Container(
-      margin: EdgeInsets.only(bottom: 550),
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 1.5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),

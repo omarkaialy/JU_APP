@@ -36,7 +36,7 @@ class _splashState extends State<splash> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo,
+      backgroundColor: Color.fromRGBO(159, 88, 216, 1),
       body: Center(
         child: Container(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -45,10 +45,11 @@ class _splashState extends State<splash> with SingleTickerProviderStateMixin {
             Padding(
                 padding: EdgeInsets.all(5.0),
                 child: TextLiquidFill(
+                  waveDuration: Duration(seconds: 5),
                   boxHeight: 300,
                   text: 'JU APP',
                   textStyle: TextStyle(color: Colors.white, fontSize: 45),
-                  boxBackgroundColor: Colors.indigo,
+                  boxBackgroundColor: Color.fromRGBO(159, 88, 216, 1),
                   waveColor: Colors.yellowAccent,
                 )),
           ]),
