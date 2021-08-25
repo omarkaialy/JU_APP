@@ -18,7 +18,7 @@ class _resultsState extends State<results> {
   @override
   void initState() {
     super.initState();
-    if (marks < 80) {
+    if (marks < 25) {
       j = 1;
     } else {
       j = 0;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 import 'Home.dart';
 
@@ -17,11 +18,11 @@ class _splashState extends State<splash> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 8), () {
       Navigator.pushReplacement(
         context,
         PageTransition(
-            type: PageTransitionType.rightToLeft,
+            type: PageTransitionType.leftToRightWithFade,
             duration: Duration(seconds: 2),
             child: Home()),
       );
@@ -42,15 +43,14 @@ class _splashState extends State<splash> with SingleTickerProviderStateMixin {
             Text('طريقك لترفيع المهارات'),
             SizedBox(height: 25),
             Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Text(
-                'JU APP',
-                style: TextStyle(
-                    fontSize: 75,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amberAccent),
-              ),
-            )
+                padding: EdgeInsets.all(5.0),
+                child: TextLiquidFill(
+                  boxHeight: 300,
+                  text: 'JU APP',
+                  textStyle: TextStyle(color: Colors.white, fontSize: 45),
+                  boxBackgroundColor: Colors.indigo,
+                  waveColor: Colors.yellowAccent,
+                )),
           ]),
         ),
       ),

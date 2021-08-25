@@ -28,69 +28,18 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        child: Column(children: [
-          Expanded(
-            flex: 2,
-            child: Container(
-              color: Colors.indigo,
-              child: Row(
-                children: [
-                  Expanded(flex: 2, child: SizedBox()),
-                  Column(
-                    children: [
-                      Expanded(
-                        flex: 6,
-                        child: Center(
-                          child: Text(
-                            'Score : $marks',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            '    question $i/100',
-                          ),
-                        ),
-                      ),
-                      Expanded(child: SizedBox())
-                    ],
-                  ),
-                  Expanded(flex: 1, child: SizedBox()),
-                  Expanded(flex: 1, child: Text(showtimer))
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-              flex: 3,
-              child: Container(
-                  child: Text(
-                Quizbrain.qui[i - 1].quiz,
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-                textAlign: TextAlign.right,
-              ))),
-          Expanded(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                choicebutton('a'),
-                choicebutton('b'),
-                choicebutton('c'),
-                choicebutton('d')
-              ],
-            ),
-          ),
-        ]),
-      ),
-    );
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: Stack(
+          alignment: Alignment(-0.1, -0.5),
+          children: [
+            Background(),
+            page(),
+          ],
+        ));
   }
 
   //to decide what the color of the button
@@ -101,13 +50,11 @@ class _HomeState extends State<Home> {
     'd': Colors.indigo
   };
 // button creater
+//TODO  تعديل هدول الزرين ليصيرو متل يلي ب الصورة يلي شفناها
   MaterialButton choicebutton(String k) {
     return MaterialButton(
       minWidth: 200,
       height: 50,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(15), bottomRight: Radius.circular(15))),
       onPressed: () {
         checkanswer(k);
         setState(() {});
@@ -170,5 +117,123 @@ class _HomeState extends State<Home> {
       btncolor['c'] = Colors.indigo;
       btncolor['d'] = Colors.indigo;
     });
+  }
+
+  Container page() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          SizedBox(
+            height: 150,
+          ),
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              quizbox(Quizbrain.qui[i - 1].quiz, Quizbrain.qui.length),
+              Container(
+                child: Text(showtimer),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 25,
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                choicebutton('a'),
+                choicebutton('b'),
+                choicebutton('c'),
+                choicebutton('d')
+              ],
+            ),
+          ),
+          Row(
+            //TODO 1 بدنا نعدل هدول الزرين ل يصيرو next back
+            children: [
+              Expanded(
+                child: MaterialButton(
+                  color: Colors.indigo,
+                  onPressed: () {},
+                  child: Text('data'),
+                ),
+              ),
+              VerticalDivider(
+                width: 3,
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Colors.indigo,
+                  onPressed: () {},
+                  child: Text('data'),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Container quizbox(String a, int y) {
+    return Container(
+      height: 250,
+      padding: EdgeInsets.all(25),
+      margin: EdgeInsets.only(left: 25, right: 25, top: 15),
+      decoration: BoxDecoration(
+          color: Colors.grey[200], borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          Container(
+            height: 25,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text('right'),
+                  flex: 3,
+                ),
+                Expanded(flex: 18, child: SizedBox()),
+                Expanded(
+                  flex: 3,
+                  child: Text('wrong'),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 25,
+          ),
+          Center(
+            child: Text('question $i / $y'),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(a),
+          )
+        ],
+      ),
+    );
+  }
+
+  Container Background() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 550),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+        image: DecorationImage(
+            image: AssetImage(
+              'images/image.jpg',
+            ),
+            fit: BoxFit.cover),
+      ),
+    );
   }
 }
