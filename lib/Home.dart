@@ -135,7 +135,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-
   //UI
   Container page() {
     return Container(
