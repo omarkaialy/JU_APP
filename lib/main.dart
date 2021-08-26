@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Home.dart';
 import 'splash.dart';
 
 void main() => runApp(MyApp(key: Key('key'),));
@@ -14,8 +15,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //TODO: add an appBar with action & leading
       debugShowCheckedModeBanner: false,
-      home: Splash(),
+      home: Home(key: Key('key'),),
     );
   }
 }

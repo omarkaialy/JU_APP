@@ -15,10 +15,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int questionCounter = 1;
   int marks = 0;
+  int wrongAnswers = 0;
   late String answer;
   late String correctAns;
   Color ourColor = Color.fromARGB(255, 154, 88, 216);
   CountDownController _controller = CountDownController();
+
   // final assetsAudioPlayer = AssetsAudioPlayer();
 
   //to set a color for each button
@@ -28,6 +30,112 @@ class _HomeState extends State<Home> {
     'c': Colors.white12,
     'd': Colors.white12,
   };
+
+  bool previousButtonDisabled = true;
+  bool nextButtonDisabled = true;
+  bool checkButtonDisabled = true;
+  List<bool> choiceButtonDisabled = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +175,10 @@ class _HomeState extends State<Home> {
           Stack(
             alignment: Alignment.topCenter,
             children: [
-              quizBox(QuizBrain.qui[questionCounter - 1].quiz, QuizBrain.qui.length),
+              quizBox(
+                QuizBrain.qui[questionCounter - 1].quiz,
+                QuizBrain.qui.length,
+              ),
               Container(
                 width: MediaQuery.of(context).size.width / 5,
                 height: MediaQuery.of(context).size.width / 5,
@@ -91,6 +202,8 @@ class _HomeState extends State<Home> {
                       duration: 30,
                       onComplete: () {
                         nextQuiz();
+                        //TODO: add Wrong audio
+                        wrongAnswers++;
                         _controller.restart();
                       },
                       textStyle: TextStyle(
@@ -100,7 +213,7 @@ class _HomeState extends State<Home> {
                       ),
                       backgroundColor: Colors.white,
                       strokeCap: StrokeCap.round,
-                      strokeWidth: 8,
+                      strokeWidth: 5,
                       fillColor: ourColor,
                       ringColor: Colors.white),
                 ),
@@ -130,9 +243,9 @@ class _HomeState extends State<Home> {
                 child: TextButton(
                   onPressed: () {
                     setState(() {
-                      if (questionCounter > 1) {
-                        questionCounter--;
-                      }
+                      if (questionCounter > 1) questionCounter--;
+                      choiceButtonDisabled[questionCounter - 1] = true;
+                      nextButtonDisabled = false;
                     });
                   },
                   child: Icon(
@@ -143,9 +256,15 @@ class _HomeState extends State<Home> {
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: () {
-                    checkAnswer(answer);
-                  },
+                  onPressed: checkButtonDisabled
+                      ? null
+                      : () {
+                          setState(() {
+                            choiceButtonDisabled[questionCounter - 1] = true;
+                            nextButtonDisabled = false;
+                          });
+                          checkAnswer(answer);
+                        },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                         Color.fromRGBO(220, 175, 255, 80),
@@ -172,11 +291,17 @@ class _HomeState extends State<Home> {
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      nextQuiz();
-                    });
-                  },
+                  onPressed: nextButtonDisabled
+                      ? null
+                      : () {
+                          setState(() {
+                            checkButtonDisabled = true;
+                            nextButtonDisabled = true;
+                            previousButtonDisabled = false;
+                            choiceButtonDisabled[questionCounter - 1] = false;
+                            nextQuiz();
+                          });
+                        },
                   child: Icon(
                     Icons.arrow_forward_ios,
                     color: Color.fromRGBO(190, 90, 220, 50),
@@ -262,7 +387,7 @@ class _HomeState extends State<Home> {
                   ),
                   Expanded(
                     child: Text(
-                      marks.toString(),
+                      wrongAnswers.toString(),
                       textDirection: TextDirection.rtl,
                       style: TextStyle(
                         fontSize: 20,
@@ -311,6 +436,8 @@ class _HomeState extends State<Home> {
       height: MediaQuery.of(context).size.height / 18,
       color: Colors.white,
       elevation: 6,
+      disabledElevation: 3,
+      disabledColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
         side: BorderSide(
@@ -318,13 +445,16 @@ class _HomeState extends State<Home> {
           width: 2,
         ),
       ),
-      onPressed: () {
-        answer = buttonKey;
-        correctAns = QuizBrain.ans[questionCounter - 1];
-        setState(() {
-          btnColor[buttonKey] = ourColor;
-        });
-      },
+      onPressed: choiceButtonDisabled[questionCounter - 1]
+          ? null
+          : () {
+              answer = buttonKey;
+              correctAns = QuizBrain.ans[questionCounter - 1];
+              setState(() {
+                btnColor[buttonKey] = ourColor;
+                checkButtonDisabled = false;
+              });
+            },
       child: Text(
         QuizBrain.omar[questionCounter.toString()]![buttonKey].toString(),
         textDirection: TextDirection.rtl,
@@ -338,7 +468,10 @@ class _HomeState extends State<Home> {
   // to check if the answer is right or wrong
   void checkAnswer(String o) {
     setState(() {
-      if (o == QuizBrain.ans[questionCounter - 1]) marks++;
+      if (o == QuizBrain.ans[questionCounter - 1])
+        marks++;
+      else
+        wrongAnswers++;
       showBtnColors();
       _controller.pause();
       //playSound();
