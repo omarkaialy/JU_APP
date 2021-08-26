@@ -17,7 +17,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       //TODO: add an appBar with action & leading
       debugShowCheckedModeBanner: false,
-      home: Home(key: Key('key'),),
+      home: Splash(),
     );
   }
 }

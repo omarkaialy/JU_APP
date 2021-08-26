@@ -241,13 +241,16 @@ class _HomeState extends State<Home> {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      if (questionCounter > 1) questionCounter--;
-                      choiceButtonDisabled[questionCounter - 1] = true;
-                      nextButtonDisabled = false;
-                    });
-                  },
+                  onPressed: previousButtonDisabled
+                      ? null
+                      : () {
+                          setState(() {
+                            if (questionCounter > 1) questionCounter--;
+                            choiceButtonDisabled[questionCounter - 1] = true;
+                            nextButtonDisabled = false;
+                            _controller.pause();
+                          });
+                        },
                   child: Icon(
                     Icons.arrow_back_ios,
                     color: Color.fromRGBO(190, 90, 220, 50),
