@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-
 import 'splash.dart';
 
-class results extends StatefulWidget {
+class Results extends StatefulWidget {
   int marks;
-  results({Key? key, required this.marks}) : super(key: key);
+  Results({required Key key, required this.marks}) : super(key: key);
 
   @override
-  _resultsState createState() => _resultsState(marks);
+  _ResultsState createState() => _ResultsState(marks);
 }
 
-class _resultsState extends State<results> {
+class _ResultsState extends State<Results> {
   int marks;
-  _resultsState(this.marks);
+  _ResultsState(this.marks);
   int j = 0;
   List<String> text = ['Congratulations!!', 'You Can Do Better !!'];
   @override
@@ -49,10 +48,14 @@ class _resultsState extends State<results> {
             Expanded(
               flex: 2,
               child: Material(
-                child: FlatButton(
+                child: TextButton(
                   onPressed: () {
-                    /*Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Splash(),),);*/
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Splash(),
+                      ),
+                    );
                   },
                   child: Text('Continue'),
                 ),

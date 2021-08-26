@@ -1,5 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+// import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'QuizBrain.dart';
 import 'results.dart';
@@ -12,100 +13,47 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int i = 1;
+  int questionCounter = 1;
   int marks = 0;
-  String answer = '';
+  late String answer;
+  late String correctAns;
+  Color ourColor = Color.fromARGB(255, 154, 88, 216);
   CountDownController _controller = CountDownController();
+  // final assetsAudioPlayer = AssetsAudioPlayer();
+
+  //to set a color for each button
+  var btnColor = {
+    'a': Colors.white12,
+    'b': Colors.white12,
+    'c': Colors.white12,
+    'd': Colors.white12,
+  };
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Stack(
-        alignment: Alignment(-0.1, -0.5),
-        children: [
-          background(),
-          page(),
-        ],
-      ),
-    );
-  }
-
-  //to decide what the color of the button
-  var btnColor = {
-    'a': Colors.black45,
-    'b': Colors.black45,
-    'c': Colors.black45,
-    'd': Colors.black45,
-  };
-
-  // button creator
-  MaterialButton choiceButton(String k) {
-    return MaterialButton(
-      minWidth: MediaQuery.of(context).size.width / 1.5,
-      height: MediaQuery.of(context).size.height / 18,
-      color: Color.fromRGBO(255, 253, 255, 99),
-      elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-        side: BorderSide(
-          color: btnColor[k]!,
-          width: 2,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey[100],
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: Stack(
+          alignment: Alignment(-0.1, -0.5),
+          children: [
+            background(),
+            page(),
+          ],
         ),
       ),
-      onPressed: () {
-        answer = k;
-      },
-      child: Text(
-        QuizBrain.omar[i.toString()]![k].toString(),
-        textDirection: TextDirection.rtl,
-      ),
-      highlightColor: Colors.indigoAccent,
-      splashColor: Colors.indigo[800],
     );
-  }
-
-  // functions
-  // to check if the answer is right or wrong
-  void checkAnswer(String o) {
-    setState(() {
-      if (o == QuizBrain.ans[i - 1]) {
-        marks++;
-        btnColor[o] = Colors.green;
-      } else {
-        btnColor[o] = Colors.red;
-      }
-    });
-  }
-
-  // play sounds
-
-  // to move between quizzes
-  void nextQuiz() {
-    setState(() {
-      if (i < 100) {
-        i++;
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => results(marks: marks),
-          ),
-        );
-      }
-      btnColor['a'] = Colors.black45;
-      btnColor['b'] = Colors.black45;
-      btnColor['c'] = Colors.black45;
-      btnColor['d'] = Colors.black45;
-    });
   }
 
   //UI
+  //TODO: disable all buttons after clicking (check answer button)
+  //TODO: disable buttons even if user clicks (<) the previous arrow
+  //TODO: don't allow the user to skip a question
   Container page() {
     return Container(
       child: Column(
@@ -114,13 +62,26 @@ class _HomeState extends State<Home> {
         mainAxisSize: MainAxisSize.max,
         children: [
           SizedBox(
-            height: 150,
+            height: MediaQuery.of(context).size.height / 9,
           ),
           Stack(
             alignment: Alignment.topCenter,
             children: [
-              quizbox(QuizBrain.qui[i - 1].quiz, QuizBrain.qui.length),
+              quizBox(QuizBrain.qui[questionCounter - 1].quiz, QuizBrain.qui.length),
               Container(
+                width: MediaQuery.of(context).size.width / 5,
+                height: MediaQuery.of(context).size.width / 5,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    new BoxShadow(
+                      color: Colors.purpleAccent,
+                    ),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(90),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
                   child: CircularCountDownTimer(
                       width: MediaQuery.of(context).size.width / 2,
                       isReverse: true,
@@ -132,14 +93,22 @@ class _HomeState extends State<Home> {
                         nextQuiz();
                         _controller.restart();
                       },
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: ourColor,
+                      ),
                       backgroundColor: Colors.white,
                       strokeCap: StrokeCap.round,
-                      fillColor: Color.fromARGB(255, 154, 88, 216),
-                      ringColor: Colors.white)),
+                      strokeWidth: 8,
+                      fillColor: ourColor,
+                      ringColor: Colors.white),
+                ),
+              ),
             ],
           ),
           SizedBox(
-            height: 25,
+            height: 20,
           ),
           Expanded(
             child: Column(
@@ -152,15 +121,17 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
           Row(
-            //TODO 1 بدنا نعدل هدول الزرين ل يصيرو next back
             children: [
               Expanded(
                 child: TextButton(
                   onPressed: () {
                     setState(() {
-                      if (i > 1) {
-                        i--;
+                      if (questionCounter > 1) {
+                        questionCounter--;
                       }
                     });
                   },
@@ -214,60 +185,118 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
+          SizedBox(
+            height: 25,
+          ),
         ],
       ),
     );
   }
 
-  Card quizbox(String a, int y) {
+  //purple background
+  Container background() {
+    return Container(
+      margin:
+          EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 1.55),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+        image: DecorationImage(
+          image: AssetImage(
+            'assets/images/purple-background-1.0.png',
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  //quiz box
+  //TODO: edit the height of quizBox (make it flexible) to avoid overflow pixels
+  Card quizBox(String question, int totalQuestions) {
     return Card(
-      margin: EdgeInsets.only(left: 25, right: 25, top: 15),
-      elevation: 5,
+      margin: EdgeInsets.only(
+        left: MediaQuery.of(context).size.width / 15,
+        right: MediaQuery.of(context).size.width / 15,
+        top: MediaQuery.of(context).size.height / 23,
+      ),
+      elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Container(
-        height: MediaQuery.of(context).size.height / 3.4,
-        padding: EdgeInsets.all(25),
-        decoration: BoxDecoration(boxShadow: [
-          new BoxShadow(
-            color: Colors.black,
-          )
-        ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        height: MediaQuery.of(context).size.height / 3.0,
+        padding: EdgeInsets.all(MediaQuery.of(context).size.height / 40),
+        decoration: BoxDecoration(
+          boxShadow: [
+            new BoxShadow(
+              color: Colors.purpleAccent,
+            ),
+          ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Column(
           children: [
             Container(
               height: 25,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20),
+                ),
+              ),
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(marks.toString(),
-                        style: TextStyle(color: Colors.green, fontSize: 20)),
-                    flex: 3,
-                  ),
-                  Expanded(flex: 18, child: SizedBox()),
-                  Expanded(
-                    flex: 3,
                     child: Text(
                       marks.toString(),
-                      style: TextStyle(fontSize: 20, color: Colors.red),
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      marks.toString(),
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   )
                 ],
               ),
             ),
             SizedBox(
-              height: 25,
+              height: MediaQuery.of(context).size.height / 50,
             ),
             Center(
               child: Text(
-                'question $i / $y',
-                style: TextStyle(color: Color.fromARGB(255, 159, 88, 216)),
+                'question $questionCounter / $totalQuestions',
+                style: TextStyle(
+                    color: ourColor, fontWeight: FontWeight.bold, fontSize: 15),
               ),
             ),
             SizedBox(
-              height: 10,
+              height: MediaQuery.of(context).size.height / 100,
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(a),
+              padding: EdgeInsets.symmetric(
+                horizontal: (MediaQuery.of(context).size.width / 150),
+                vertical: (MediaQuery.of(context).size.height / 80),
+              ),
+              child: Text(
+                question,
+                textDirection: TextDirection.rtl,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+              ),
             )
           ],
         ),
@@ -275,22 +304,88 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Container background() {
-    return Container(
-      margin:
-          EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 1.55),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-        image: DecorationImage(
-          image: AssetImage(
-            'images/purple-background-1.0.png',
-          ),
-          fit: BoxFit.cover,
+  // button creator
+  MaterialButton choiceButton(String buttonKey) {
+    return MaterialButton(
+      minWidth: MediaQuery.of(context).size.width / 1.5,
+      height: MediaQuery.of(context).size.height / 18,
+      color: Colors.white,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: BorderSide(
+          color: btnColor[buttonKey]!,
+          width: 2,
         ),
       ),
+      onPressed: () {
+        answer = buttonKey;
+        correctAns = QuizBrain.ans[questionCounter - 1];
+        setState(() {
+          btnColor[buttonKey] = ourColor;
+        });
+      },
+      child: Text(
+        QuizBrain.omar[questionCounter.toString()]![buttonKey].toString(),
+        textDirection: TextDirection.rtl,
+      ),
+      highlightColor: ourColor,
+      splashColor: ourColor,
     );
   }
+
+  // functions
+  // to check if the answer is right or wrong
+  void checkAnswer(String o) {
+    setState(() {
+      if (o == QuizBrain.ans[questionCounter - 1]) marks++;
+      showBtnColors();
+      _controller.pause();
+      //playSound();
+    });
+  }
+
+  //TODO: play sounds
+  /*void playSound() {
+    if (answer == correctAns)
+      assetsAudioPlayer.open(
+        Audio("assets/sounds/Correct.mp3"),
+      );
+    else
+      assetsAudioPlayer.open(
+        Audio("assets/sounds/'Wrong.mp3"),
+      );
+  }*/
+
+  // show all buttons' colors
+  void showBtnColors() {
+    btnColor[correctAns] = Colors.green;
+    if (answer != correctAns) btnColor[answer] = Colors.red;
+  }
+
+  // to move between quizzes
+  void nextQuiz() {
+    setState(() {
+      if (questionCounter < 100) {
+        questionCounter++;
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Results(
+              marks: marks,
+              key: Key('key2'),
+            ),
+          ),
+        );
+      }
+      btnColor['a'] = Colors.black45;
+      btnColor['b'] = Colors.black45;
+      btnColor['c'] = Colors.black45;
+      btnColor['d'] = Colors.black45;
+      _controller.start();
+    });
+  }
+
+  //TODO: void previousQuiz(){}
 }

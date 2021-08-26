@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'splash.dart';
 
-// import 'splash.dart';
-
-void main() => runApp(MyApp());
+void main() => runApp(MyApp(key: Key('key'),));
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  MyApp({required Key key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
