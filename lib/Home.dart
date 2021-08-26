@@ -5,7 +5,7 @@ import 'QuizBrain.dart';
 import 'results.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+  Home({Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -13,21 +13,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int i = 1;
-  bool cancelTimer = false;
   int marks = 0;
-  int timer = 30;
-  String showTimer = '30';
+  String answer = '';
   CountDownController _controller = CountDownController();
-
-  @override
-  void initState() {
-    startTimer();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -54,23 +47,22 @@ class _HomeState extends State<Home> {
   // button creator
   MaterialButton choiceButton(String k) {
     return MaterialButton(
-      minWidth: 225,
-      height: 40,
+      minWidth: MediaQuery.of(context).size.width / 1.5,
+      height: MediaQuery.of(context).size.height / 18,
       color: Color.fromRGBO(255, 253, 255, 99),
-      elevation: 4,
+      elevation: 6,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
         side: BorderSide(
-          color: btnColor[k],
+          color: btnColor[k]!,
           width: 2,
         ),
       ),
       onPressed: () {
-        checkAnswer(k);
-        setState(() {});
+        answer = k;
       },
       child: Text(
-        QuizBrain.omar[i.toString()][k].toString(),
+        QuizBrain.omar[i.toString()]![k].toString(),
         textDirection: TextDirection.rtl,
       ),
       highlightColor: Colors.indigoAccent,
@@ -80,34 +72,14 @@ class _HomeState extends State<Home> {
 
   // functions
   // to check if the answer is right or wrong
-  void checkAnswer(String k) {
+  void checkAnswer(String o) {
     setState(() {
-      if (k == QuizBrain.ans[i - 1]) {
+      if (o == QuizBrain.ans[i - 1]) {
         marks++;
-        btnColor[k] = Colors.green;
+        btnColor[o] = Colors.green;
       } else {
-        btnColor[k] = Colors.red;
+        btnColor[o] = Colors.red;
       }
-      cancelTimer = true;
-    });
-    Timer(Duration(seconds: 1), nextQuiz);
-  }
-
-  // to start the timer
-  void startTimer() async {
-    const oneSec = Duration(seconds: 1);
-    Timer.periodic(oneSec, (Timer t) {
-      setState(() {
-        if (timer <= 1) {
-          t.cancel();
-          nextQuiz();
-          startTimer();
-        } else if (cancelTimer == true) {
-        } else {
-          timer--;
-        }
-        showTimer = timer.toString();
-      });
     });
   }
 
@@ -115,8 +87,6 @@ class _HomeState extends State<Home> {
 
   // to move between quizzes
   void nextQuiz() {
-    cancelTimer = false;
-    timer = 30;
     setState(() {
       if (i < 100) {
         i++;
@@ -149,10 +119,23 @@ class _HomeState extends State<Home> {
           Stack(
             alignment: Alignment.topCenter,
             children: [
-              quizBox(QuizBrain.qui[i - 1].quiz, QuizBrain.qui.length),
+              quizbox(QuizBrain.qui[i - 1].quiz, QuizBrain.qui.length),
               Container(
-                child: Text(showTimer),
-              ),
+                  child: CircularCountDownTimer(
+                      width: MediaQuery.of(context).size.width / 2,
+                      isReverse: true,
+                      isReverseAnimation: true,
+                      controller: _controller,
+                      height: MediaQuery.of(context).size.height / 12,
+                      duration: 30,
+                      onComplete: () {
+                        nextQuiz();
+                        _controller.restart();
+                      },
+                      backgroundColor: Colors.white,
+                      strokeCap: StrokeCap.round,
+                      fillColor: Color.fromARGB(255, 154, 88, 216),
+                      ringColor: Colors.white)),
             ],
           ),
           SizedBox(
@@ -174,7 +157,13 @@ class _HomeState extends State<Home> {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      if (i > 1) {
+                        i--;
+                      }
+                    });
+                  },
                   child: Icon(
                     Icons.arrow_back_ios,
                     color: Color.fromRGBO(190, 90, 220, 50),
@@ -183,7 +172,9 @@ class _HomeState extends State<Home> {
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    checkAnswer(answer);
+                  },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                         Color.fromRGBO(220, 175, 255, 80),
@@ -210,7 +201,11 @@ class _HomeState extends State<Home> {
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      nextQuiz();
+                    });
+                  },
                   child: Icon(
                     Icons.arrow_forward_ios,
                     color: Color.fromRGBO(190, 90, 220, 50),
@@ -224,60 +219,66 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Container quizBox(String a, int y) {
-    Color c = Color.fromRGBO(255, 255, 255, 100);
-    return Container(
-      height: 240,
-      //color: Color.fromRGBO(255, 255, 255, 100),
-      padding: EdgeInsets.all(25),
+  Card quizbox(String a, int y) {
+    return Card(
       margin: EdgeInsets.only(left: 25, right: 25, top: 15),
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 25,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text('right'),
-                  flex: 3,
-                ),
-                Expanded(flex: 14, child: SizedBox()),
-                Expanded(
-                  flex: 3,
-                  child: Text('wrong'),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 25,
-          ),
-          Center(
-            child: Text('question $i / $y'),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              a,
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+      elevation: 5,
+      child: Container(
+        height: MediaQuery.of(context).size.height / 3.4,
+        padding: EdgeInsets.all(25),
+        decoration: BoxDecoration(boxShadow: [
+          new BoxShadow(
+            color: Colors.black,
+          )
+        ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          children: [
+            Container(
+              height: 25,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(marks.toString(),
+                        style: TextStyle(color: Colors.green, fontSize: 20)),
+                    flex: 3,
+                  ),
+                  Expanded(flex: 18, child: SizedBox()),
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      marks.toString(),
+                      style: TextStyle(fontSize: 20, color: Colors.red),
+                    ),
+                  )
+                ],
               ),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 25,
+            ),
+            Center(
+              child: Text(
+                'question $i / $y',
+                style: TextStyle(color: Color.fromARGB(255, 159, 88, 216)),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(a),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Container background() {
     return Container(
-      margin: EdgeInsets.only(bottom: 450),
+      margin:
+          EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 1.55),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30),

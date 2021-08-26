@@ -4,7 +4,7 @@ import 'splash.dart';
 
 class results extends StatefulWidget {
   int marks;
-  results({Key key, this.marks}) : super(key: key);
+  results({Key? key, required this.marks}) : super(key: key);
 
   @override
   _resultsState createState() => _resultsState(marks);

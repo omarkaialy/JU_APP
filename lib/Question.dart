@@ -1,5 +1,5 @@
 class Question {
-  String quiz;
+  String quiz = '';
 
   Question(String a) {
     quiz = a;
