@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'Home.dart';
+import 'package:flutter/services.dart';
+
 import 'splash.dart';
 
-void main() => runApp(MyApp(key: Key('key'),));
-
-class MyApp extends StatefulWidget {
-  MyApp({required Key key}) : super(key: key);
-
-  @override
-  _MyAppState createState() => _MyAppState();
+void main() {
+  runApp(MyApp());
 }
 
-class _MyAppState extends State<MyApp> {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return MaterialApp(
-      //TODO: add an appBar with action & leading
       debugShowCheckedModeBanner: false,
       home: Splash(),
     );

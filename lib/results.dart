@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'splash.dart';
 
 class Results extends StatefulWidget {
   int marks;
@@ -49,14 +48,7 @@ class _ResultsState extends State<Results> {
               flex: 2,
               child: Material(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Splash(),
-                      ),
-                    );
-                  },
+                  onPressed: () {},
                   child: Text('Continue'),
                 ),
               ),
