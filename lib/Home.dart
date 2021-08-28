@@ -74,12 +74,14 @@ class _HomeState extends State<Home> {
                 QuizBrain.qui.length,
               ),
               Container(
-                width: 20.w,
-                height: 20.w,
+                width: 15.w,
+                height: 15.w,
                 decoration: BoxDecoration(
                   boxShadow: [
                     new BoxShadow(
                       color: ourColor,
+                      //offset: Offset.fromDirection(50),
+                      blurRadius: 10,
                     ),
                   ],
                   color: Colors.white,
@@ -104,7 +106,7 @@ class _HomeState extends State<Home> {
                     },
                     textStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                       color: ourColor,
                     ),
                     backgroundColor: Colors.white,
@@ -127,103 +129,116 @@ class _HomeState extends State<Home> {
                 choiceButton('a'),
                 choiceButton('b'),
                 choiceButton('c'),
-                choiceButton('d')
+                choiceButton('d'),
+                SizedBox(height: 1.5.h),
+                Row(
+                  children: [
+                    SizedBox(width: 5.w),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: (buttonDisabled == 1 || buttonClicked)
+                            ? () {
+                                // showMessage('لا يوجد سؤال سابق');
+                              }
+                            : () {
+                                setState(() {
+                                  if (questionCounter > 1) {
+                                    previousQuiz();
+                                    resetButtonsColors();
+                                    showBtnColors();
+                                    _controller.pause();
+                                  }
+                                });
+                              },
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Color.fromRGBO(190, 90, 220, 50),
+                        ),
+                      ),
+                    ),
+                    //SizedBox(width: 2.w),
+                    Expanded(
+                      child: MaterialButton(
+                        // style: ButtonStyle(
+                        //   backgroundColor: MaterialStateProperty.all(
+                        //     Color.fromRGBO(220, 175, 255, 80),
+                        //   ),
+                        //   elevation: MaterialStateProperty.all(3),
+                        //   side: MaterialStateProperty.all(
+                        //     BorderSide(
+                        //       color: Color.fromRGBO(190, 90, 220, 50),
+                        //       width: 1.5,
+                        //     ),
+                        //   ),
+                        //   shape: MaterialStateProperty.all(
+                        //     RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(15),
+                        //     ),
+                        //   ),
+                        // ),
+                        minWidth: 10.w,
+                        height: 6.h,
+                        color: Color.fromRGBO(220, 175, 255, 80),
+                        elevation: 10,
+                        disabledElevation: 3,
+                        disabledColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(
+                            color: ourColor,
+                            width: 2,
+                          ),
+                        ),
+                        child: Text(
+                          'Check Answer',
+                          style: TextStyle(
+                            color: Color.fromRGBO(190, 90, 220, 50),
+                            fontSize: 8.sp,
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (buttonDisabled == questionCounter &&
+                                answer != '') {
+                              checkAnswer(answer);
+                              showBtnColors();
+                              buttonClicked = false;
+                            }
+                            /*else
+                        showMessage('اختر إجابة');*/
+                          });
+                        },
+                      ),
+                    ),
+                    //SizedBox(width: 2.w),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: (questionCounter >= buttonDisabled)
+                            ? () {
+                                // showMessage('اختر إجابة');
+                              }
+                            : () {
+                                setState(() {
+                                  nextQuiz();
+                                  resetButtonsColors();
+                                  if (questionCounter != buttonDisabled)
+                                    showBtnColors();
+                                });
+                              },
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Color.fromRGBO(190, 90, 220, 50),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 5.w),
+                  ],
+                ),
               ],
             ),
           ),
           SizedBox(
-            height: 3.h,
-          ),
-          Row(
-            children: [
-              SizedBox(width: 5.w),
-              Expanded(
-                child: TextButton(
-                  onPressed: (buttonDisabled == 1 || buttonClicked)
-                      ? () {
-                          // showMessage('لا يوجد سؤال سابق');
-                        }
-                      : () {
-                          setState(() {
-                            if (questionCounter > 1) {
-                              previousQuiz();
-                              resetButtonsColors();
-                              showBtnColors();
-                              _controller.pause();
-                            }
-                          });
-                        },
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    color: Color.fromRGBO(190, 90, 220, 50),
-                  ),
-                ),
-              ),
-              //SizedBox(width: 2.w),
-              Expanded(
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Color.fromRGBO(220, 175, 255, 80),
-                    ),
-                    elevation: MaterialStateProperty.all(3),
-                    side: MaterialStateProperty.all(
-                      BorderSide(
-                        color: Color.fromRGBO(190, 90, 220, 50),
-                        width: 1.5,
-                      ),
-                    ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'Check Answer',
-                    style: TextStyle(
-                      color: Color.fromRGBO(190, 90, 220, 50),
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      if (buttonDisabled == questionCounter && answer != '') {
-                        checkAnswer(answer);
-                        showBtnColors();
-                        buttonClicked = false;
-                      }
-                      /*else
-                        showMessage('اختر إجابة');*/
-                    });
-                  },
-                ),
-              ),
-              //SizedBox(width: 2.w),
-              Expanded(
-                child: TextButton(
-                  onPressed: (questionCounter >= buttonDisabled)
-                      ? () {
-                          // showMessage('اختر إجابة');
-                        }
-                      : () {
-                          setState(() {
-                            nextQuiz();
-                            resetButtonsColors();
-                            if (questionCounter != buttonDisabled)
-                              showBtnColors();
-                          });
-                        },
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color.fromRGBO(190, 90, 220, 50),
-                  ),
-                ),
-              ),
-              SizedBox(width: 5.w),
-            ],
-          ),
-          SizedBox(
-            height: 3.h,
+            height: 1.h,
           ),
         ],
       ),
@@ -354,7 +369,7 @@ class _HomeState extends State<Home> {
                 style: TextStyle(
                   color: ourColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 12.sp,
+                  fontSize: 9.sp,
                 ),
               ),
             ),
@@ -371,7 +386,7 @@ class _HomeState extends State<Home> {
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
+                  fontSize: 12.5.sp,
                 ),
               ),
             ),
@@ -385,7 +400,7 @@ class _HomeState extends State<Home> {
   MaterialButton choiceButton(String buttonKey) {
     return MaterialButton(
       minWidth: 68.w,
-      height: 5.5.h,
+      height: 7.h,
       color: Colors.white,
       elevation: 10,
       disabledElevation: 3,
@@ -394,7 +409,7 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.circular(15),
         side: BorderSide(
           color: btnColor[buttonKey]!,
-          width: 2,
+          width: 2.5,
         ),
       ),
       onPressed: () {
@@ -411,6 +426,9 @@ class _HomeState extends State<Home> {
       child: Text(
         QuizBrain.omar[questionCounter.toString()]![buttonKey].toString(),
         textDirection: TextDirection.rtl,
+        style: TextStyle(
+          fontSize: 9.sp,
+        ),
       ),
       highlightColor: ourColor,
       splashColor: ourColor,
