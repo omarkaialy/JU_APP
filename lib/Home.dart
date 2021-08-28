@@ -2,6 +2,7 @@ import 'QuizBrain.dart';
 import 'results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:sizer/sizer.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
@@ -63,7 +64,7 @@ class _HomeState extends State<Home> {
         mainAxisSize: MainAxisSize.max,
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height / 9,
+            height: 12.h,
           ),
           Stack(
             alignment: Alignment.topCenter,
@@ -73,12 +74,12 @@ class _HomeState extends State<Home> {
                 QuizBrain.qui.length,
               ),
               Container(
-                width: MediaQuery.of(context).size.width / 5,
-                height: MediaQuery.of(context).size.width / 5,
+                width: 20.w,
+                height: 20.w,
                 decoration: BoxDecoration(
                   boxShadow: [
                     new BoxShadow(
-                      color: Colors.purpleAccent,
+                      color: ourColor,
                     ),
                   ],
                   color: Colors.white,
@@ -87,11 +88,11 @@ class _HomeState extends State<Home> {
                 child: Padding(
                   padding: const EdgeInsets.all(6.0),
                   child: CircularCountDownTimer(
-                    width: MediaQuery.of(context).size.width / 2,
+                    width: 50.w,
+                    height: 12.h,
                     isReverse: true,
                     isReverseAnimation: true,
                     controller: _controller,
-                    height: MediaQuery.of(context).size.height / 12,
                     duration: 30,
                     onComplete: () {
                       nextQuiz();
@@ -103,7 +104,7 @@ class _HomeState extends State<Home> {
                     },
                     textStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 14.sp,
                       color: ourColor,
                     ),
                     backgroundColor: Colors.white,
@@ -117,7 +118,7 @@ class _HomeState extends State<Home> {
             ],
           ),
           SizedBox(
-            height: 20,
+            height: 4.h,
           ),
           Expanded(
             child: Column(
@@ -131,10 +132,11 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 3.h,
           ),
           Row(
             children: [
+              SizedBox(width: 5.w),
               Expanded(
                 child: TextButton(
                   onPressed: (buttonDisabled == 1 || buttonClicked)
@@ -157,6 +159,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
+              //SizedBox(width: 2.w),
               Expanded(
                 child: TextButton(
                   style: ButtonStyle(
@@ -195,6 +198,7 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ),
+              //SizedBox(width: 2.w),
               Expanded(
                 child: TextButton(
                   onPressed: (questionCounter >= buttonDisabled)
@@ -215,10 +219,11 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
+              SizedBox(width: 5.w),
             ],
           ),
           SizedBox(
-            height: 25,
+            height: 3.h,
           ),
         ],
       ),
@@ -242,19 +247,28 @@ class _HomeState extends State<Home> {
   //purple background
   Container background() {
     return Container(
-      margin:
-          EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 1.55),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        ),
-        image: DecorationImage(
-          image: AssetImage(
-            'assets/images/purple-background-1.0.png',
+      child: Column(
+        children: [
+          Container(
+            height: 32.h,
+            //margin: EdgeInsets.only(bottom: 68.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+              image: DecorationImage(
+                image: AssetImage(
+                  'assets/images/purple-background-1.0.png',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          fit: BoxFit.cover,
-        ),
+          SizedBox(
+            height: 68.h,
+          ),
+        ],
       ),
     );
   }
@@ -264,25 +278,26 @@ class _HomeState extends State<Home> {
   Card quizBox(String question, int totalQuestions) {
     return Card(
       margin: EdgeInsets.only(
-        left: MediaQuery.of(context).size.width / 15,
-        right: MediaQuery.of(context).size.width / 15,
-        top: MediaQuery.of(context).size.height / 23,
+        left: 8.w,
+        right: 8.w,
+        top: 5.h,
       ),
       elevation: 10,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        height: MediaQuery.of(context).size.height / 3.0,
+        height: 30.h,
         padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.height / 40,
-            right: MediaQuery.of(context).size.height / 40,
-            top: MediaQuery.of(context).size.height / 40,
-            bottom: MediaQuery.of(context).size.height / 25),
+          left: 5.w,
+          right: 5.w,
+          top: 2.h,
+          bottom: 2.h,
+        ),
         decoration: BoxDecoration(
           boxShadow: [
             new BoxShadow(
-              color: Colors.purpleAccent,
+              color: ourColor,
             ),
           ],
           color: Colors.white,
@@ -291,65 +306,75 @@ class _HomeState extends State<Home> {
         child: Column(
           children: [
             Container(
-              height: 25,
+              height: 4.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(20),
                 ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      marks.toString(),
-                      textDirection: TextDirection.ltr,
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 4.w,
+                  vertical: 0.h,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        marks.toString(),
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      wrongAnswers.toString(),
-                      textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        wrongAnswers.toString(),
+                        textDirection: TextDirection.rtl,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height / 50,
+              height: 1.5.h,
             ),
             Center(
               child: Text(
                 'question $questionCounter / $totalQuestions',
                 style: TextStyle(
-                    color: ourColor, fontWeight: FontWeight.bold, fontSize: 15),
+                  color: ourColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.sp,
+                ),
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height / 100,
+              height: 1.5.h,
             ),
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: (MediaQuery.of(context).textScaleFactor),
-                vertical: (MediaQuery.of(context).textScaleFactor),
+                horizontal: (3.w),
+                vertical: (0.h),
               ),
               child: Text(
                 question,
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width / 23),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.sp,
+                ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -359,10 +384,10 @@ class _HomeState extends State<Home> {
   // button creator
   MaterialButton choiceButton(String buttonKey) {
     return MaterialButton(
-      minWidth: MediaQuery.of(context).size.width / 1.5,
-      height: MediaQuery.of(context).size.height / 18,
+      minWidth: 68.w,
+      height: 5.5.h,
       color: Colors.white,
-      elevation: 6,
+      elevation: 10,
       disabledElevation: 3,
       disabledColor: Colors.white,
       shape: RoundedRectangleBorder(
