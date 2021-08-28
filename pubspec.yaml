@@ -13,21 +13,22 @@ dependencies:
     sdk: flutter
 
   
-  sizer: ^2.0.13
+  
   cupertino_icons: ^1.0.2
   page_transition: ^2.0.2
   animated_text_kit: ^4.2.1
   circular_countdown_timer: ^0.2.0
   animated_splash_screen: ^1.1.0-nullsafety.0
-  #fluttertoast: ^8.0.8
-  #audioplayers: ^0.17.0
+  fluttertoast: ^8.0.8
+  audioplayers: ^0.17.0
   #assets_audio_player: ^3.0.3+6
-  #flutter_launcher_icons: ^0.8.1
+  flutter_launcher_icons: ^0.8.1
+  flutter_screenutil: ^5.0.0+2
 
-#flutter_icons:
-  #android: "launcher_icon"
-  #ios: true
-  #image_path: "assets/images/2.png"
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/2.png"
 
 
 dev_dependencies:

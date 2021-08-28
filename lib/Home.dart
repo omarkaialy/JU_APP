@@ -1,9 +1,11 @@
+import 'package:audioplayers/audio_cache.dart';
+
 import 'QuizBrain.dart';
 import 'results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:sizer/sizer.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
@@ -16,16 +18,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int questionCounter = 1;
+  int streak = 0;
   int marks = 0;
   int wrongAnswers = 0;
   String answer = '';
   late String correctAns;
   Color ourColor = Color.fromARGB(255, 154, 88, 216);
   CountDownController _controller = CountDownController();
+
   String boolean = '';
   int buttonDisabled = 1;
   bool buttonClicked = false;
-  // final assetsAudioPlayer = AssetsAudioPlayer();
+  final assetsAudioPlayer = AudioCache();
 
   //to set a color for each button
   var btnColor = {
@@ -64,7 +68,7 @@ class _HomeState extends State<Home> {
         mainAxisSize: MainAxisSize.max,
         children: [
           SizedBox(
-            height: 12.h,
+            height: 0.12.sh,
           ),
           Stack(
             alignment: Alignment.topCenter,
@@ -74,8 +78,8 @@ class _HomeState extends State<Home> {
                 QuizBrain.qui.length,
               ),
               Container(
-                width: 15.w,
-                height: 15.w,
+                width: 0.15.sw,
+                height: 0.15.sw,
                 decoration: BoxDecoration(
                   boxShadow: [
                     new BoxShadow(
@@ -90,8 +94,8 @@ class _HomeState extends State<Home> {
                 child: Padding(
                   padding: const EdgeInsets.all(6.0),
                   child: CircularCountDownTimer(
-                    width: 50.w,
-                    height: 12.h,
+                    width: 0.50.sw,
+                    height: 0.12.sh,
                     isReverse: true,
                     isReverseAnimation: true,
                     controller: _controller,
@@ -100,13 +104,13 @@ class _HomeState extends State<Home> {
                       nextQuiz();
                       resetButtonsColors();
                       buttonDisabled++;
-                      //TODO: add Wrong audio
+                      playSound(0);
                       wrongAnswers++;
                       _controller.restart();
                     },
                     textStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 13.sp,
+                      fontSize: 16,
                       color: ourColor,
                     ),
                     backgroundColor: Colors.white,
@@ -120,7 +124,7 @@ class _HomeState extends State<Home> {
             ],
           ),
           SizedBox(
-            height: 4.h,
+            height: 0.04.sh,
           ),
           Expanded(
             child: Column(
@@ -130,16 +134,14 @@ class _HomeState extends State<Home> {
                 choiceButton('b'),
                 choiceButton('c'),
                 choiceButton('d'),
-                SizedBox(height: 1.5.h),
+                SizedBox(height: 0.015.sh),
                 Row(
                   children: [
-                    SizedBox(width: 5.w),
+                    SizedBox(width: 0.05.sw),
                     Expanded(
                       child: TextButton(
-                        onPressed: (buttonDisabled == 1 || buttonClicked)
-                            ? () {
-                                // showMessage('لا يوجد سؤال سابق');
-                              }
+                        onPressed: (buttonDisabled == 1)
+                            ? null
                             : () {
                                 setState(() {
                                   if (questionCounter > 1) {
@@ -147,6 +149,8 @@ class _HomeState extends State<Home> {
                                     resetButtonsColors();
                                     showBtnColors();
                                     _controller.pause();
+                                  } else {
+                                    showMessage('لا يوجد سؤال سابق');
                                   }
                                 });
                               },
@@ -156,7 +160,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    //SizedBox(width: 2.w),
+                    //SizedBox(width: 2.sw),
                     Expanded(
                       child: MaterialButton(
                         // style: ButtonStyle(
@@ -176,8 +180,8 @@ class _HomeState extends State<Home> {
                         //     ),
                         //   ),
                         // ),
-                        minWidth: 10.w,
-                        height: 6.h,
+                        minWidth: 0.10.sw,
+                        height: 0.06.sh,
                         color: Color.fromRGBO(220, 175, 255, 80),
                         elevation: 10,
                         disabledElevation: 3,
@@ -193,7 +197,7 @@ class _HomeState extends State<Home> {
                           'Check Answer',
                           style: TextStyle(
                             color: Color.fromRGBO(190, 90, 220, 50),
-                            fontSize: 8.sp,
+                            fontSize: 0.026.sw,
                           ),
                         ),
                         onPressed: () {
@@ -203,19 +207,20 @@ class _HomeState extends State<Home> {
                               checkAnswer(answer);
                               showBtnColors();
                               buttonClicked = false;
-                            }
-                            /*else
-                        showMessage('اختر إجابة');*/
+                            } else if (buttonDisabled > questionCounter) {
+                              showMessage('لقد اجبت عن هذا السؤال مسبقا');
+                            } else
+                              showMessage('اختر إجابة');
                           });
                         },
                       ),
                     ),
-                    //SizedBox(width: 2.w),
+                    //SizedBox(width: 2.sw),
                     Expanded(
                       child: TextButton(
                         onPressed: (questionCounter >= buttonDisabled)
                             ? () {
-                                // showMessage('اختر إجابة');
+                                showMessage('اختر إجابة');
                               }
                             : () {
                                 setState(() {
@@ -231,14 +236,14 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 5.w),
+                    SizedBox(width: 0.05.sw),
                   ],
                 ),
               ],
             ),
           ),
           SizedBox(
-            height: 1.h,
+            height: 0.01.sh,
           ),
         ],
       ),
@@ -265,8 +270,8 @@ class _HomeState extends State<Home> {
       child: Column(
         children: [
           Container(
-            height: 32.h,
-            //margin: EdgeInsets.only(bottom: 68.h),
+            height: 0.32.sh,
+            //margin: EdgeInsets.only(bottom: 68.sh),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
@@ -281,7 +286,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(
-            height: 68.h,
+            height: 0.68.sh,
           ),
         ],
       ),
@@ -293,21 +298,21 @@ class _HomeState extends State<Home> {
   Card quizBox(String question, int totalQuestions) {
     return Card(
       margin: EdgeInsets.only(
-        left: 8.w,
-        right: 8.w,
-        top: 5.h,
+        left: 0.08.sw,
+        right: 0.08.sw,
+        top: 0.05.sh,
       ),
       elevation: 10,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
-        height: 30.h,
+        height: 0.3.sh,
         padding: EdgeInsets.only(
-          left: 5.w,
-          right: 5.w,
-          top: 2.h,
-          bottom: 2.h,
+          left: 0.05.sw,
+          right: 0.05.sw,
+          top: 0.02.sh,
+          bottom: 0.02.sh,
         ),
         decoration: BoxDecoration(
           boxShadow: [
@@ -321,7 +326,7 @@ class _HomeState extends State<Home> {
         child: Column(
           children: [
             Container(
-              height: 4.h,
+              height: 0.04.sh,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(20),
@@ -329,8 +334,8 @@ class _HomeState extends State<Home> {
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 4.w,
-                  vertical: 0.h,
+                  horizontal: 0.04.sw,
+                  vertical: 0.sh,
                 ),
                 child: Row(
                   children: [
@@ -340,7 +345,7 @@ class _HomeState extends State<Home> {
                         textDirection: TextDirection.ltr,
                         style: TextStyle(
                           color: Colors.green,
-                          fontSize: 15.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -350,7 +355,7 @@ class _HomeState extends State<Home> {
                         wrongAnswers.toString(),
                         textDirection: TextDirection.rtl,
                         style: TextStyle(
-                          fontSize: 15.sp,
+                          fontSize: 16,
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
@@ -361,7 +366,7 @@ class _HomeState extends State<Home> {
               ),
             ),
             SizedBox(
-              height: 1.5.h,
+              height: 0.015.sh,
             ),
             Center(
               child: Text(
@@ -369,24 +374,24 @@ class _HomeState extends State<Home> {
                 style: TextStyle(
                   color: ourColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 9.sp,
+                  fontSize: 15,
                 ),
               ),
             ),
             SizedBox(
-              height: 1.5.h,
+              height: 0.015.sh,
             ),
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: (3.w),
-                vertical: (0.h),
+                horizontal: (0.03.sw),
+                vertical: (0.sh),
               ),
               child: Text(
                 question,
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 12.5.sp,
+                  fontSize: 15,
                 ),
               ),
             ),
@@ -399,8 +404,8 @@ class _HomeState extends State<Home> {
   // button creator
   MaterialButton choiceButton(String buttonKey) {
     return MaterialButton(
-      minWidth: 68.w,
-      height: 7.h,
+      minWidth: 0.68.sw,
+      height: 0.07.sh,
       color: Colors.white,
       elevation: 10,
       disabledElevation: 3,
@@ -427,7 +432,7 @@ class _HomeState extends State<Home> {
         QuizBrain.omar[questionCounter.toString()]![buttonKey].toString(),
         textDirection: TextDirection.rtl,
         style: TextStyle(
-          fontSize: 9.sp,
+          fontSize: 12,
         ),
       ),
       highlightColor: ourColor,
@@ -438,16 +443,17 @@ class _HomeState extends State<Home> {
   // functions
 
   // TODO: Toast function
-  /*void showMessage(String message) {
+  void showMessage(String message) {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
+        webPosition: "center",
         backgroundColor: ourColor,
         textColor: Colors.white,
         fontSize: 16.0);
-  }*/
+  }
 
   //reseting choice buttons colors
   void resetButtonsColors() {
@@ -462,31 +468,37 @@ class _HomeState extends State<Home> {
   // to check if the answer is right or wrong
   void checkAnswer(String newanswer) {
     setState(() {
-      if (newanswer == QuizBrain.ans[questionCounter - 1])
+      if (newanswer == QuizBrain.ans[questionCounter - 1]) {
         marks++;
-      else
+        streak++;
+        playSound(1);
+      } else {
         wrongAnswers++;
+        streak = 0;
+        playSound(0);
+      }
       showBtnColors();
+      _controller.restart();
+
       _controller.pause();
       buttonDisabled++;
-
       answer = '';
-
-      //playSound();
+      if (streak % 10 == 0 && streak > 0) {
+        playSound(2);
+        showMessage('$streak اجابة صحيحة متتالية');
+      }
     });
   }
 
   //TODO: play sounds
-  /*void playSound() {
-    if (answer == correctAns)
-      assetsAudioPlayer.open(
-        Audio("assets/sounds/Correct.mp3"),
-      );
-    else
-      assetsAudioPlayer.open(
-        Audio("assets/sounds/'Wrong.mp3"),
-      );
-  }*/
+  void playSound(int i) {
+    if (i == 1) {
+      assetsAudioPlayer.play('sounds/Correct.mp3');
+    } else if (i == 2) {
+      assetsAudioPlayer.play('sounds/clapping.wav');
+    } else
+      assetsAudioPlayer.play('sounds/Wrong.mp3');
+  }
 
   // show all buttons' colors
   void showBtnColors() {
@@ -516,7 +528,7 @@ class _HomeState extends State<Home> {
       btnColor['c'] = Colors.black45;
       btnColor['d'] = Colors.black45;
       if (questionCounter >= buttonDisabled) {
-        _controller.restart();
+        _controller.resume();
       }
     });
   }
