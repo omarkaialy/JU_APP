@@ -22,7 +22,8 @@ class _HomeState extends State<Home> {
   Color ourColor = Color.fromARGB(255, 154, 88, 216);
   CountDownController _controller = CountDownController();
   String boolean = '';
-  int buttondiasbled = 1;
+  int buttonDisabled = 1;
+  bool buttonClicked = false;
   // final assetsAudioPlayer = AssetsAudioPlayer();
 
   //to set a color for each button
@@ -95,7 +96,7 @@ class _HomeState extends State<Home> {
                     onComplete: () {
                       nextQuiz();
                       resetButtonsColors();
-                      buttondiasbled++;
+                      buttonDisabled++;
                       //TODO: add Wrong audio
                       wrongAnswers++;
                       _controller.restart();
@@ -136,16 +137,18 @@ class _HomeState extends State<Home> {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: (buttondiasbled == 1)
+                  onPressed: (buttonDisabled == 1 || buttonClicked)
                       ? () {
                           // showMessage('لا يوجد سؤال سابق');
                         }
                       : () {
                           setState(() {
-                            if (questionCounter > 1) previousQuiz();
-                            resetButtonsColors();
-                            showBtnColors();
-                            _controller.pause();
+                            if (questionCounter > 1) {
+                              previousQuiz();
+                              resetButtonsColors();
+                              showBtnColors();
+                              _controller.pause();
+                            }
                           });
                         },
                   child: Icon(
@@ -181,9 +184,10 @@ class _HomeState extends State<Home> {
                   ),
                   onPressed: () {
                     setState(() {
-                      if (buttondiasbled == questionCounter && answer != '') {
+                      if (buttonDisabled == questionCounter && answer != '') {
                         checkAnswer(answer);
                         showBtnColors();
+                        buttonClicked = false;
                       }
                       /*else
                         showMessage('اختر إجابة');*/
@@ -193,7 +197,7 @@ class _HomeState extends State<Home> {
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: (questionCounter >= buttondiasbled)
+                  onPressed: (questionCounter >= buttonDisabled)
                       ? () {
                           // showMessage('اختر إجابة');
                         }
@@ -201,7 +205,7 @@ class _HomeState extends State<Home> {
                           setState(() {
                             nextQuiz();
                             resetButtonsColors();
-                            if (questionCounter != buttondiasbled)
+                            if (questionCounter != buttonDisabled)
                               showBtnColors();
                           });
                         },
@@ -369,10 +373,11 @@ class _HomeState extends State<Home> {
         ),
       ),
       onPressed: () {
-        if (questionCounter >= buttondiasbled) {
+        if (questionCounter >= buttonDisabled) {
           answer = buttonKey;
           correctAns = QuizBrain.ans[questionCounter - 1];
           setState(() {
+            buttonClicked = true;
             resetButtonsColors();
             btnColor[buttonKey] = ourColor;
           });
@@ -420,7 +425,7 @@ class _HomeState extends State<Home> {
         wrongAnswers++;
       showBtnColors();
       _controller.pause();
-      buttondiasbled++;
+      buttonDisabled++;
 
       answer = '';
 
@@ -467,7 +472,7 @@ class _HomeState extends State<Home> {
       btnColor['b'] = Colors.black45;
       btnColor['c'] = Colors.black45;
       btnColor['d'] = Colors.black45;
-      if (questionCounter >= buttondiasbled) {
+      if (questionCounter >= buttonDisabled) {
         _controller.restart();
       }
     });
