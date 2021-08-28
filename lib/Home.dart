@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-// import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'QuizBrain.dart';
 import 'results.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -15,14 +16,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int questionCounter = 1;
   int marks = 0;
-
   int wrongAnswers = 0;
   String answer = '';
   late String correctAns;
   Color ourColor = Color.fromARGB(255, 154, 88, 216);
   CountDownController _controller = CountDownController();
   String boolean = '';
-  int buttondiasbled = 1; // final assetsAudioPlayer = AssetsAudioPlayer();
+  int buttondiasbled = 1;
+  // final assetsAudioPlayer = AssetsAudioPlayer();
 
   //to set a color for each button
   var btnColor = {
@@ -34,29 +35,25 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.grey[100],
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Stack(
-          alignment: Alignment(-0.1, -0.5),
-          children: [
-            background(),
-            page(),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Stack(
+        alignment: Alignment(-0.1, -0.5),
+        children: [
+          islamicBackground(),
+          background(),
+          page(),
+        ],
       ),
     );
   }
 
-  //UI
-  //TODO: disable all buttons after clicking (check answer button) done
-  //TODO: disable buttons even if user clicks (<) the previous arrow done
-  //TODO: don't allow the user to skip a question done
+  //Quiz Page UI
   Container page() {
     return Container(
       child: Column(
@@ -97,6 +94,7 @@ class _HomeState extends State<Home> {
                     duration: 30,
                     onComplete: () {
                       nextQuiz();
+                      resetButtonsColors();
                       buttondiasbled++;
                       //TODO: add Wrong audio
                       wrongAnswers++;
@@ -138,13 +136,18 @@ class _HomeState extends State<Home> {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      if (questionCounter > 1) previousQuiz();
-
-                      _controller.pause();
-                    });
-                  },
+                  onPressed: (buttondiasbled == 1)
+                      ? () {
+                          // showMessage('لا يوجد سؤال سابق');
+                        }
+                      : () {
+                          setState(() {
+                            if (questionCounter > 1) previousQuiz();
+                            resetButtonsColors();
+                            showBtnColors();
+                            _controller.pause();
+                          });
+                        },
                   child: Icon(
                     Icons.arrow_back_ios,
                     color: Color.fromRGBO(190, 90, 220, 50),
@@ -154,21 +157,22 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: TextButton(
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        Color.fromRGBO(220, 175, 255, 80),
+                    backgroundColor: MaterialStateProperty.all(
+                      Color.fromRGBO(220, 175, 255, 80),
+                    ),
+                    elevation: MaterialStateProperty.all(3),
+                    side: MaterialStateProperty.all(
+                      BorderSide(
+                        color: Color.fromRGBO(190, 90, 220, 50),
+                        width: 1.5,
                       ),
-                      elevation: MaterialStateProperty.all(3),
-                      side: MaterialStateProperty.all(
-                        BorderSide(
-                          color: Color.fromRGBO(190, 90, 220, 50),
-                          width: 1.5,
-                        ),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      )),
+                    ),
+                  ),
                   child: Text(
                     'Check Answer',
                     style: TextStyle(
@@ -176,20 +180,29 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   onPressed: () {
-                    //done
-                    if (buttondiasbled == questionCounter && answer != '') {
-                      checkAnswer(answer);
-                    }
+                    setState(() {
+                      if (buttondiasbled == questionCounter && answer != '') {
+                        checkAnswer(answer);
+                        showBtnColors();
+                      }
+                      /*else
+                        showMessage('اختر إجابة');*/
+                    });
                   },
                 ),
               ),
               Expanded(
                 child: TextButton(
                   onPressed: (questionCounter >= buttondiasbled)
-                      ? null
+                      ? () {
+                          // showMessage('اختر إجابة');
+                        }
                       : () {
                           setState(() {
                             nextQuiz();
+                            resetButtonsColors();
+                            if (questionCounter != buttondiasbled)
+                              showBtnColors();
                           });
                         },
                   child: Icon(
@@ -204,6 +217,20 @@ class _HomeState extends State<Home> {
             height: 25,
           ),
         ],
+      ),
+    );
+  }
+
+  //Islamic background
+  Container islamicBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            'assets/images/islamic.png',
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -346,6 +373,7 @@ class _HomeState extends State<Home> {
           answer = buttonKey;
           correctAns = QuizBrain.ans[questionCounter - 1];
           setState(() {
+            resetButtonsColors();
             btnColor[buttonKey] = ourColor;
           });
         }
@@ -360,6 +388,29 @@ class _HomeState extends State<Home> {
   }
 
   // functions
+
+  // TODO: Toast function
+  /*void showMessage(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: ourColor,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }*/
+
+  //reseting choice buttons colors
+  void resetButtonsColors() {
+    btnColor = {
+      'a': Colors.white12,
+      'b': Colors.white12,
+      'c': Colors.white12,
+      'd': Colors.white12,
+    };
+  }
+
   // to check if the answer is right or wrong
   void checkAnswer(String newanswer) {
     setState(() {
@@ -391,8 +442,9 @@ class _HomeState extends State<Home> {
 
   // show all buttons' colors
   void showBtnColors() {
-    btnColor[correctAns] = Colors.green;
-    if (answer != correctAns) btnColor[answer] = Colors.red;
+    btnColor[QuizBrain.ans[questionCounter - 1]] = Colors.green;
+    if (answer != QuizBrain.ans[questionCounter - 1])
+      btnColor[answer] = Colors.red;
   }
 
   // to move between quizzes
@@ -421,12 +473,10 @@ class _HomeState extends State<Home> {
     });
   }
 
-// TODO done
   void previousQuiz() {
     setState(() {
       _controller.pause();
       questionCounter--;
-
       btnColor['a'] = Colors.black45;
       btnColor['b'] = Colors.black45;
       btnColor['c'] = Colors.black45;

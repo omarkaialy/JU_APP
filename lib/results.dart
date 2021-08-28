@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class Results extends StatefulWidget {
   int marks;
   Results({required Key key, required this.marks}) : super(key: key);
