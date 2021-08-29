@@ -21,14 +21,13 @@ dependencies:
   animated_splash_screen: ^1.1.0-nullsafety.0
   fluttertoast: ^8.0.8
   audioplayers: ^0.17.0
-  #assets_audio_player: ^3.0.3+6
   flutter_launcher_icons: ^0.8.1
   flutter_screenutil: ^5.0.0+2
 
 flutter_icons:
-  android: "launcher_icon"
   ios: true
-  image_path: "assets/2.png"
+  android: true
+  image_path: "icons/2.png"
 
 
 dev_dependencies:
@@ -40,3 +39,4 @@ flutter:
   assets:
     - assets/images/
     - assets/sounds/
+    - icons/
