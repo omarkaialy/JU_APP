@@ -1,12 +1,11 @@
 import 'package:audioplayers/audio_cache.dart';
-
 import 'QuizBrain.dart';
 import 'results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/services.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 class Home extends StatefulWidget {
@@ -17,20 +16,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int questionCounter = 1;
-  int streak = 0;
-  int marks = 0;
-  int wrongAnswers = 0;
   String answer = '';
-  late String correctAns;
-  Color ourColor = Color.fromARGB(255, 154, 88, 216);
-  CountDownController _controller = CountDownController();
-
-  String boolean = '';
-  int buttonDisabled = 1;
-  bool buttonClicked = false;
   final assetsAudioPlayer = AudioCache();
-
+  String boolean = '';
   //to set a color for each button
   var btnColor = {
     'a': Colors.white12,
@@ -39,25 +27,16 @@ class _HomeState extends State<Home> {
     'd': Colors.white12,
   };
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Stack(
-        alignment: Alignment(-0.1, -0.5),
-        children: [
-          islamicBackground(),
-          background(),
-          page(),
-        ],
-      ),
-    );
-  }
+  bool buttonClicked = false;
+  int buttonDisabled = 1;
+  late String correctAns;
+  int marks = 0;
+  Color ourColor = Color.fromARGB(255, 154, 88, 216);
+  int questionCounter = 1;
+  int streak = 0;
+  int wrongAnswers = 0;
+
+  CountDownController _controller = CountDownController();
 
   //Quiz Page UI
   Container page() {
@@ -110,7 +89,7 @@ class _HomeState extends State<Home> {
                     },
                     textStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 0.045.sw,
                       color: ourColor,
                     ),
                     backgroundColor: Colors.white,
@@ -345,7 +324,7 @@ class _HomeState extends State<Home> {
                         textDirection: TextDirection.ltr,
                         style: TextStyle(
                           color: Colors.green,
-                          fontSize: 16,
+                          fontSize: 0.045.sw,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -355,7 +334,7 @@ class _HomeState extends State<Home> {
                         wrongAnswers.toString(),
                         textDirection: TextDirection.rtl,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 0.045.sw,
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
@@ -374,7 +353,7 @@ class _HomeState extends State<Home> {
                 style: TextStyle(
                   color: ourColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 00.04.sw,
                 ),
               ),
             ),
@@ -391,7 +370,7 @@ class _HomeState extends State<Home> {
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 0.0375.sw,
                 ),
               ),
             ),
@@ -432,7 +411,7 @@ class _HomeState extends State<Home> {
         QuizBrain.omar[questionCounter.toString()]![buttonKey].toString(),
         textDirection: TextDirection.rtl,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 0.035.sw,
         ),
       ),
       highlightColor: ourColor,
@@ -449,10 +428,9 @@ class _HomeState extends State<Home> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
-        webPosition: "center",
         backgroundColor: ourColor,
         textColor: Colors.white,
-        fontSize: 16.0);
+        fontSize: 0.045.sw);
   }
 
   //reseting choice buttons colors
@@ -472,10 +450,12 @@ class _HomeState extends State<Home> {
         marks++;
         streak++;
         playSound(1);
+        HapticFeedback.vibrate();
       } else {
         wrongAnswers++;
         streak = 0;
         playSound(0);
+        HapticFeedback.vibrate();
       }
       showBtnColors();
       _controller.restart();
@@ -542,5 +522,25 @@ class _HomeState extends State<Home> {
       btnColor['c'] = Colors.black45;
       btnColor['d'] = Colors.black45;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Stack(
+        alignment: Alignment(-0.1, -0.5),
+        children: [
+          islamicBackground(),
+          background(),
+          page(),
+        ],
+      ),
+    );
   }
 }
