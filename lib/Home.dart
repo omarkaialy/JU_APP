@@ -1,10 +1,13 @@
-import 'package:audioplayers/audio_cache.dart';
+// ignore: import_of_legacy_library_into_null_safe
+// import 'package:audioplayers/audio_cache.dart';
+import 'dart:ui';
+
 import 'QuizBrain.dart';
 import 'results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
@@ -16,8 +19,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  //vriables:
   String answer = '';
-  final assetsAudioPlayer = AudioCache();
   String boolean = '';
   //to set a color for each button
   var btnColor = {
@@ -26,21 +29,24 @@ class _HomeState extends State<Home> {
     'c': Colors.white12,
     'd': Colors.white12,
   };
-
   bool buttonClicked = false;
   int buttonDisabled = 1;
   late String correctAns;
   int marks = 0;
   Color ourColor = Color.fromARGB(255, 154, 88, 216);
+  Color timerColor = Color.fromARGB(255, 154, 88, 216);
+  //TODO: timerColor = (_controller.getTime() <= 5) ? ourColor : Colors.red
   int questionCounter = 1;
   int streak = 0;
   int wrongAnswers = 0;
-
+  //final assetsAudioPlayer = AudioCache();
   CountDownController _controller = CountDownController();
+  //end variables
 
   //Quiz Page UI
   Container page() {
     return Container(
+      //main column
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -49,6 +55,7 @@ class _HomeState extends State<Home> {
           SizedBox(
             height: 0.12.sh,
           ),
+          //for timer
           Stack(
             alignment: Alignment.topCenter,
             children: [
@@ -56,14 +63,14 @@ class _HomeState extends State<Home> {
                 QuizBrain.qui[questionCounter - 1].quiz,
                 QuizBrain.qui.length,
               ),
+              //white timer container
               Container(
-                width: 0.15.sw,
-                height: 0.15.sw,
+                width: 0.195.sw,
+                height: 0.195.sw,
                 decoration: BoxDecoration(
                   boxShadow: [
                     new BoxShadow(
                       color: ourColor,
-                      //offset: Offset.fromDirection(50),
                       blurRadius: 10,
                     ),
                   ],
@@ -71,7 +78,8 @@ class _HomeState extends State<Home> {
                   borderRadius: BorderRadius.circular(90),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(6.0),
+                  padding: EdgeInsets.all(0.0065.sh),
+                  //timer
                   child: CircularCountDownTimer(
                     width: 0.50.sw,
                     height: 0.12.sh,
@@ -81,30 +89,29 @@ class _HomeState extends State<Home> {
                     duration: 30,
                     onComplete: () {
                       nextQuiz();
+                      answer = '';
                       resetButtonsColors();
                       buttonDisabled++;
-                      playSound(0);
+                      // playSound(0);
                       wrongAnswers++;
                       _controller.restart();
                     },
                     textStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 0.045.sw,
-                      color: ourColor,
+                      color: timerColor,
                     ),
                     backgroundColor: Colors.white,
                     strokeCap: StrokeCap.butt,
                     strokeWidth: 5,
-                    fillColor: ourColor,
+                    fillColor: timerColor,
                     ringColor: Colors.white,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(
-            height: 0.04.sh,
-          ),
+          SizedBox(height: 0.04.sh),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -113,14 +120,18 @@ class _HomeState extends State<Home> {
                 choiceButton('b'),
                 choiceButton('c'),
                 choiceButton('d'),
-                SizedBox(height: 0.015.sh),
+                SizedBox(height: 0.012.sh),
+                //down row (controlling buttons)
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 0.05.sw),
-                    Expanded(
+                    RotatedBox(
+                      quarterTurns: 2,
                       child: TextButton(
                         onPressed: (buttonDisabled == 1)
-                            ? null
+                            ? () {
+                                //showMessage('لا يوجد سؤال سابق',1);
+                              }
                             : () {
                                 setState(() {
                                   if (questionCounter > 1) {
@@ -128,39 +139,24 @@ class _HomeState extends State<Home> {
                                     resetButtonsColors();
                                     showBtnColors();
                                     _controller.pause();
-                                  } else {
-                                    showMessage('لا يوجد سؤال سابق');
                                   }
                                 });
                               },
                         child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Color.fromRGBO(190, 90, 220, 50),
+                          Icons.arrow_forward_ios,
+                          color: ourColor,
+                          size: 60.sp,
                         ),
                       ),
                     ),
-                    //SizedBox(width: 2.sw),
-                    Expanded(
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: (0.075.sw),
+                        vertical: (0.sh),
+                      ),
                       child: MaterialButton(
-                        // style: ButtonStyle(
-                        //   backgroundColor: MaterialStateProperty.all(
-                        //     Color.fromRGBO(220, 175, 255, 80),
-                        //   ),
-                        //   elevation: MaterialStateProperty.all(3),
-                        //   side: MaterialStateProperty.all(
-                        //     BorderSide(
-                        //       color: Color.fromRGBO(190, 90, 220, 50),
-                        //       width: 1.5,
-                        //     ),
-                        //   ),
-                        //   shape: MaterialStateProperty.all(
-                        //     RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(15),
-                        //     ),
-                        //   ),
-                        // ),
-                        minWidth: 0.10.sw,
-                        height: 0.06.sh,
+                        minWidth: 0.30.sw,
+                        height: 0.055.sh,
                         color: Color.fromRGBO(220, 175, 255, 80),
                         elevation: 10,
                         disabledElevation: 3,
@@ -173,10 +169,12 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         child: Text(
-                          'Check Answer',
+                          'تحقق',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color.fromRGBO(190, 90, 220, 50),
-                            fontSize: 0.026.sw,
+                            color: ourColor,
+                            fontSize: 0.045.sw,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         onPressed: () {
@@ -186,50 +184,48 @@ class _HomeState extends State<Home> {
                               checkAnswer(answer);
                               showBtnColors();
                               buttonClicked = false;
-                            } else if (buttonDisabled > questionCounter) {
-                              showMessage('لقد اجبت عن هذا السؤال مسبقا');
+                            }
+                            /*else if (buttonDisabled > questionCounter) {
+                              showMessage('لقد  أجبت عن هذا السؤال مسبقا',1);
                             } else
-                              showMessage('اختر إجابة');
+                              showMessage('اختر إجابة',1);*/
                           });
                         },
                       ),
                     ),
-                    //SizedBox(width: 2.sw),
-                    Expanded(
-                      child: TextButton(
-                        onPressed: (questionCounter >= buttonDisabled)
-                            ? () {
-                                showMessage('اختر إجابة');
-                              }
-                            : () {
-                                setState(() {
-                                  nextQuiz();
-                                  resetButtonsColors();
-                                  if (questionCounter != buttonDisabled)
-                                    showBtnColors();
-                                });
-                              },
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color.fromRGBO(190, 90, 220, 50),
-                        ),
+                    TextButton(
+                      onPressed: (questionCounter >= buttonDisabled)
+                          ? () {
+                              //showMessage('اختر إجابة',1);
+                            }
+                          : () {
+                              setState(() {
+                                nextQuiz();
+                                resetButtonsColors();
+                                if (questionCounter != buttonDisabled)
+                                  showBtnColors();
+                              });
+                            },
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: ourColor,
+                        size: 60.sp,
                       ),
                     ),
-                    SizedBox(width: 0.05.sw),
                   ],
                 ),
               ],
             ),
           ),
           SizedBox(
-            height: 0.01.sh,
+            height: 0.015.sh,
           ),
         ],
       ),
     );
   }
 
-  //Islamic background
+  //white Islamic background
   Container islamicBackground() {
     return Container(
       decoration: BoxDecoration(
@@ -250,7 +246,6 @@ class _HomeState extends State<Home> {
         children: [
           Container(
             height: 0.32.sh,
-            //margin: EdgeInsets.only(bottom: 68.sh),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
@@ -258,7 +253,7 @@ class _HomeState extends State<Home> {
               ),
               image: DecorationImage(
                 image: AssetImage(
-                  'assets/images/purple-background-1.0.png',
+                  'assets/images/purple-background-2.1.png',
                 ),
                 fit: BoxFit.cover,
               ),
@@ -287,11 +282,9 @@ class _HomeState extends State<Home> {
       ),
       child: Container(
         height: 0.3.sh,
-        padding: EdgeInsets.only(
-          left: 0.05.sw,
-          right: 0.05.sw,
-          top: 0.02.sh,
-          bottom: 0.02.sh,
+        padding: EdgeInsets.symmetric(
+          horizontal: 0.05.sw,
+          vertical: 0.025.sh,
         ),
         decoration: BoxDecoration(
           boxShadow: [
@@ -304,6 +297,7 @@ class _HomeState extends State<Home> {
         ),
         child: Column(
           children: [
+            //correct & wrong answers counters
             Container(
               height: 0.04.sh,
               decoration: BoxDecoration(
@@ -344,22 +338,39 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 0.015.sh,
-            ),
-            Center(
-              child: Text(
-                'question $questionCounter / $totalQuestions',
-                style: TextStyle(
-                  color: ourColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 00.04.sw,
+            SizedBox(height: 0.015.sh),
+            //Question counter
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Question ',
+                  style: TextStyle(
+                    color: ourColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 00.04.sw,
+                  ),
                 ),
-              ),
+                Text(
+                  '$questionCounter ',
+                  style: TextStyle(
+                    color: ourColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 00.055.sw,
+                  ),
+                ),
+                Text(
+                  '/ $totalQuestions',
+                  style: TextStyle(
+                    color: ourColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 00.04.sw,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 0.015.sh,
-            ),
+            SizedBox(height: 0.015.sh),
+            //Quetion text
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: (0.03.sw),
@@ -370,7 +381,7 @@ class _HomeState extends State<Home> {
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 0.0375.sw,
+                  fontSize: 0.0425.sw,
                 ),
               ),
             ),
@@ -384,7 +395,7 @@ class _HomeState extends State<Home> {
   MaterialButton choiceButton(String buttonKey) {
     return MaterialButton(
       minWidth: 0.68.sw,
-      height: 0.07.sh,
+      height: 0.058.sh,
       color: Colors.white,
       elevation: 10,
       disabledElevation: 3,
@@ -397,6 +408,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       onPressed: () {
+        // this condition is to ensure that answerd Q buttons are diasabled
         if (questionCounter >= buttonDisabled) {
           answer = buttonKey;
           correctAns = QuizBrain.ans[questionCounter - 1];
@@ -407,11 +419,13 @@ class _HomeState extends State<Home> {
           });
         }
       },
+      // choices
       child: Text(
         QuizBrain.omar[questionCounter.toString()]![buttonKey].toString(),
         textDirection: TextDirection.rtl,
         style: TextStyle(
-          fontSize: 0.035.sw,
+          fontSize: 0.0365.sw,
+          fontWeight: FontWeight.bold,
         ),
       ),
       highlightColor: ourColor,
@@ -421,19 +435,23 @@ class _HomeState extends State<Home> {
 
   // functions
 
-  // TODO: Toast function
-  void showMessage(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: ourColor,
-        textColor: Colors.white,
-        fontSize: 0.045.sw);
+  // Toast message
+  void showMessage(String message, int intColor) {
+    late Color color = Colors.green;
+    if (intColor == 1) color = Colors.red;
+
+    /*Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: color,
+      textColor: Colors.white,
+      fontSize: 0.045.sw,
+    );*/
   }
 
-  //reseting choice buttons colors
+  //resetting choice buttons colors
   void resetButtonsColors() {
     btnColor = {
       'a': Colors.white12,
@@ -444,41 +462,39 @@ class _HomeState extends State<Home> {
   }
 
   // to check if the answer is right or wrong
-  void checkAnswer(String newanswer) {
+  void checkAnswer(String newAnswer) {
     setState(() {
-      if (newanswer == QuizBrain.ans[questionCounter - 1]) {
+      if (newAnswer == QuizBrain.ans[questionCounter - 1]) {
         marks++;
         streak++;
-        playSound(1);
+        // playSound(1);
         HapticFeedback.vibrate();
       } else {
         wrongAnswers++;
         streak = 0;
-        playSound(0);
+        // playSound(0);
         HapticFeedback.vibrate();
       }
       showBtnColors();
-      _controller.restart();
-
       _controller.pause();
       buttonDisabled++;
       answer = '';
       if (streak % 10 == 0 && streak > 0) {
-        playSound(2);
-        showMessage('$streak اجابة صحيحة متتالية');
+        // playSound(2);
+        // showMessage('$streak اجابة صحيحة متتالية',0);
       }
     });
   }
 
-  //TODO: play sounds
-  void playSound(int i) {
+  // play sounds
+  /*void playSound(int i) {
     if (i == 1) {
       assetsAudioPlayer.play('sounds/Correct.mp3');
     } else if (i == 2) {
       assetsAudioPlayer.play('sounds/clapping.wav');
     } else
       assetsAudioPlayer.play('sounds/Wrong.mp3');
-  }
+  }*/
 
   // show all buttons' colors
   void showBtnColors() {
@@ -487,7 +503,7 @@ class _HomeState extends State<Home> {
       btnColor[answer] = Colors.red;
   }
 
-  // to move between quizzes
+  // to move to next quiz
   void nextQuiz() {
     setState(() {
       if (questionCounter < 100) {
@@ -503,6 +519,7 @@ class _HomeState extends State<Home> {
           ),
         );
       }
+      _controller.restart();
       btnColor['a'] = Colors.black45;
       btnColor['b'] = Colors.black45;
       btnColor['c'] = Colors.black45;
@@ -513,6 +530,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // to move to previous quiz
   void previousQuiz() {
     setState(() {
       _controller.pause();
@@ -524,6 +542,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // build method
   @override
   Widget build(BuildContext context) {
     return Scaffold(
