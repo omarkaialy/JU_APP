@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ju_app/Home.dart';
 import 'animation_screen.dart';
-import '../Home.dart';
 
 class Splash extends StatefulWidget {
   Splash({Key? key}) : super(key: key);
