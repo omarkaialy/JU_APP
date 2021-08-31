@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ju_app/QuizPage.dart';
@@ -16,57 +13,86 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Colors.purpleAccent,
-        child: Row(
-          children: [
-            Spacer(),
-            Column(
+    return Scaffold(
+        extendBodyBehindAppBar: true,
+        drawer: Drawer(
+          elevation: 2,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 0.25.sh,
+              ),
+              Row(
+                children: [Spacer(), Text('developed by omar'), Spacer()],
+              )
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Text('مهارات التواصل'),
+          centerTitle: true,
+        ),
+        body: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/images.jpeg'),
+                    fit: BoxFit.cover)),
+            child: Column(
               children: [
-                SizedBox(
-                  height: 0.25.sh,
+                Row(
+                  children: [
+                    Spacer(),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 0.25.sh,
+                        ),
+                        FlatButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onPressed: () {},
+                            child: containers(Colors.blue, 'الملخص')),
+                        SizedBox(
+                          height: 0.035.sh,
+                        ),
+                        FlatButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onPressed: () {},
+                            child: containers(Colors.green, 'الدوارت'))
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 0.35.sh,
+                        ),
+                        FlatButton(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        QuizPage.withoutLocatio(
+                                            key: Key('key3'),
+                                            map: QuizBrain.qui,
+                                            answerslist: QuizBrain.omar,
+                                            correctanswers: QuizBrain.ans)));
+                          },
+                          child: containers(Colors.red, 'الاختبار الشامل'),
+                        ),
+                      ],
+                    ),
+                    Spacer()
+                  ],
                 ),
-                FlatButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {},
-                    child: containers(Colors.blue, 'الملخص')),
-                SizedBox(
-                  height: 0.035.sh,
-                ),
-                FlatButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {},
-                    child: containers(Colors.green, 'الدوارت'))
               ],
-            ),
-            Spacer(),
-            Column(
-              children: [
-                SizedBox(
-                  height: 0.35.sh,
-                ),
-                FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => QuizPage.withoutLocatio(
-                                key: Key('key3'),
-                                map: QuizBrain.qui,
-                                answerslist: QuizBrain.omar,
-                                correctanswers: QuizBrain.ans)));
-                  },
-                  child: containers(Colors.red, 'الاختبار الشامل'),
-                ),
-              ],
-            ),
-            Spacer()
-          ],
-        ));
+            )));
   }
 
   Stack containers(Color kColor, String kText) {

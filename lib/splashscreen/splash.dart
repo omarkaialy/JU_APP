@@ -10,19 +10,6 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
-  // ignore: unused_field
-  late Animation<double> _animation;
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 5));
-    _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController);
-    _animationController.forward();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -30,7 +17,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
       Scaffold(body: Home()),
       IgnorePointer(
           child: Stack(children: [
-        AnimationScreen(color: Colors.black),
+        AnimationScreen(color: Colors.purple),
       ])),
     ]));
   }

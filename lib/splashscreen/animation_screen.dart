@@ -65,16 +65,22 @@ class _AnimationScreenState extends State<AnimationScreen>
       Center(
         child: Opacity(
           opacity: _animation.textOpacity.value,
-          child: Column(
-            children: [
-              SizedBox(
-                height: size.height / 4,
-              ),
-              Image(
-                image: AssetImage('assets/images/splash.gif'),
-                fit: BoxFit.scaleDown,
-              ),
-            ],
+          child: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/background.png'),
+                    fit: BoxFit.cover)),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: size.height / 4,
+                ),
+                Image(
+                  image: AssetImage('assets/images/splash.gif'),
+                  fit: BoxFit.scaleDown,
+                ),
+              ],
+            ),
           ),
         ),
       ),
