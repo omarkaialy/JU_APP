@@ -60,7 +60,18 @@ class _HomeState extends State<Home> {
                         FlatButton(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          QuizPage.withoutLocatio(
+                                              key: Key('key3'),
+                                              map: QuizBrain.exams,
+                                              answerslist: QuizBrain.exans,
+                                              correctanswers:
+                                                  QuizBrain.correctanswers)));
+                            },
                             child: containers(Colors.green, 'الدوارت'))
                       ],
                     ),
@@ -74,7 +85,7 @@ class _HomeState extends State<Home> {
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
                           onPressed: () {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>

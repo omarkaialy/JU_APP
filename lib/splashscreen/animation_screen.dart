@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'hole_painter.dart';
 import 'staggered_raindrop_animation.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 
 class AnimationScreen extends StatefulWidget {
   AnimationScreen({required this.color});

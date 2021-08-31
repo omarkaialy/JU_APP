@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ju_app/Home.dart';
-import 'package:ju_app/results.dart';
+
 import 'splashscreen/splash.dart';
 
 void main() => runApp(MyApp());

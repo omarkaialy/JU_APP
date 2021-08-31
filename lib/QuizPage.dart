@@ -523,7 +523,7 @@ class _QuizPageState extends State<QuizPage> {
   // to move to next quiz
   void nextQuiz() {
     setState(() {
-      if (questionCounter < 100) {
+      if (questionCounter < map.length) {
         questionCounter++;
       } else {
         Navigator.pushReplacement(
