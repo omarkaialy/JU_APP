@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'hole_painter.dart';
 import 'staggered_raindrop_animation.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class AnimationScreen extends StatefulWidget {
   AnimationScreen({required this.color});
@@ -64,12 +65,19 @@ class _AnimationScreenState extends State<AnimationScreen>
       Center(
         child: Opacity(
           opacity: _animation.textOpacity.value,
-          child: Text(
-            'C S',
-            style: TextStyle(fontSize: 25, color: Colors.amber),
+          child: Column(
+            children: [
+              SizedBox(
+                height: size.height / 4,
+              ),
+              Image(
+                image: AssetImage('assets/images/splash.gif'),
+                fit: BoxFit.scaleDown,
+              ),
+            ],
           ),
         ),
-      )
+      ),
     ]);
   }
 

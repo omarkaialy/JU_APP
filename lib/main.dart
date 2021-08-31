@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ju_app/Home.dart';
+import 'package:ju_app/results.dart';
 import 'splashscreen/splash.dart';
 
 void main() => runApp(MyApp());
@@ -13,10 +15,8 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return ScreenUtilInit(
       designSize: Size(720, 1520),
-      builder: () => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Splash(),
-      ),
+      builder: () =>
+          MaterialApp(debugShowCheckedModeBanner: false, home: Splash()),
     );
   }
 }

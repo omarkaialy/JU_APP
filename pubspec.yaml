@@ -23,6 +23,7 @@ dependencies:
   audioplayers: ^0.17.0
   flutter_launcher_icons: ^0.8.1
   flutter_screenutil: ^5.0.0+2
+  share: ^2.0.4
 
 flutter_icons:
   ios: true

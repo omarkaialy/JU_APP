@@ -1,5 +1,5 @@
 // ignore: import_of_legacy_library_into_null_safe
-// import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audio_cache.dart';
 import 'dart:ui';
 
 import 'results.dart';
@@ -14,7 +14,7 @@ class QuizPage extends StatefulWidget {
   var map;
   var answerslist;
   var correctanswers;
-
+  QuizPage.without(Key key);
   QuizPage.withoutLocatio(
       {required Key key,
       required this.map,
@@ -53,7 +53,7 @@ class _QuizPageState extends State<QuizPage> {
   int questionCounter = 1;
   int streak = 0;
   int wrongAnswers = 0;
-  //final assetsAudioPlayer = AudioCache();
+  final assetsAudioPlayer = AudioCache();
   CountDownController _controller = CountDownController();
   //end variables
 
@@ -106,7 +106,7 @@ class _QuizPageState extends State<QuizPage> {
                       answer = '';
                       resetButtonsColors();
                       buttonDisabled++;
-                      // playSound(0);
+                      playSound(0);
                       wrongAnswers++;
                       _controller.restart();
                     },
@@ -143,8 +143,8 @@ class _QuizPageState extends State<QuizPage> {
                       quarterTurns: 2,
                       child: TextButton(
                         onPressed: () {
-                          if (buttonDisabled == 1) {
-                            showMessage('لا يوجد سؤال سابق', 1);
+                          if (questionCounter == 1) {
+                            showMessage('لا يوجد سؤال سابق', Colors.red);
                           }
                           setState(() {
                             if (questionCounter > 1) {
@@ -198,9 +198,10 @@ class _QuizPageState extends State<QuizPage> {
                               showBtnColors();
                               buttonClicked = false;
                             } else if (buttonDisabled > questionCounter) {
-                              showMessage('لقد  أجبت عن هذا السؤال مسبقا', 1);
+                              showMessage('لقد  أجبت عن هذا السؤال مسبقا',
+                                  Colors.green);
                             } else
-                              showMessage('اختر إجابة', 1);
+                              showMessage('اختر إجابة', Colors.grey);
                           });
                         },
                       ),
@@ -208,7 +209,9 @@ class _QuizPageState extends State<QuizPage> {
                     TextButton(
                       onPressed: (questionCounter >= buttonDisabled)
                           ? () {
-                              showMessage('اختر إجابة', 1);
+                              showMessage(
+                                  'عليك الاجابة قبل الانتقال الى السؤال التالي',
+                                  Colors.grey);
                             }
                           : () {
                               setState(() {
@@ -448,19 +451,21 @@ class _QuizPageState extends State<QuizPage> {
   // functions
 
   // Toast message
-  void showMessage(String message, int intColor) {
-    late Color color = Colors.green;
-    if (intColor == 1) color = Colors.red;
-
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: color,
-      textColor: Colors.white,
-      fontSize: 0.045.sw,
-    );
+  void showMessage(String message, Color kColor) {
+    FToast().init(context).showToast(
+        gravity: ToastGravity.CENTER,
+        toastDuration: Duration(milliseconds: 1500),
+        child: Container(
+            decoration: BoxDecoration(
+              color: kColor,
+              borderRadius: BorderRadius.circular(40),
+            ),
+            height: 0.04.sh,
+            width: 0.5.sw,
+            child: Center(
+              child: Text(message,
+                  style: TextStyle(fontSize: 12, color: Colors.white)),
+            )));
   }
 
   //resetting choice buttons colors
@@ -479,12 +484,12 @@ class _QuizPageState extends State<QuizPage> {
       if (newAnswer == correctanswers[questionCounter - 1]) {
         marks++;
         streak++;
-        // playSound(1);
+        playSound(1);
         HapticFeedback.vibrate();
       } else {
         wrongAnswers++;
         streak = 0;
-        // playSound(0);
+        playSound(0);
         HapticFeedback.vibrate();
       }
       showBtnColors();
@@ -492,21 +497,21 @@ class _QuizPageState extends State<QuizPage> {
       buttonDisabled++;
       answer = '';
       if (streak % 10 == 0 && streak > 0) {
-        // playSound(2);
-        showMessage('$streak اجابة صحيحة متتالية', 0);
+        playSound(2);
+        showMessage('$streak اجابة صحيحة متتالية', Colors.green);
       }
     });
   }
 
   // play sounds
-  /*void playSound(int i) {
+  void playSound(int i) {
     if (i == 1) {
       assetsAudioPlayer.play('sounds/Correct.mp3');
     } else if (i == 2) {
       assetsAudioPlayer.play('sounds/clapping.wav');
     } else
       assetsAudioPlayer.play('sounds/Wrong.mp3');
-  }*/
+  }
 
   // show all buttons' colors
   void showBtnColors() {
@@ -527,6 +532,8 @@ class _QuizPageState extends State<QuizPage> {
             builder: (context) => Results(
               marks: marks,
               key: Key('key2'),
+              wrong: wrongAnswers,
+              correctlist: correctanswers,
             ),
           ),
         );

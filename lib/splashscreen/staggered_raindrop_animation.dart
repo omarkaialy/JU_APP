@@ -42,7 +42,7 @@ class StaggeredRaindropAnimation {
   final Animation<double> holeSize;
   final Animation<double> textOpacity;
 
-  static final double maximumDropSize = 30;
+  static final double maximumDropSize = 26;
   static final double maximumRelativeDropY = 0.5;
   static final double maximumHoleSize = 8;
 }

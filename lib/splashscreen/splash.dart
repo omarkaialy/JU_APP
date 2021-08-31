@@ -30,7 +30,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
       Scaffold(body: Home()),
       IgnorePointer(
           child: Stack(children: [
-        AnimationScreen(color: Color.fromRGBO(154, 88, 216, 1)),
+        AnimationScreen(color: Colors.black),
       ])),
     ]));
   }
